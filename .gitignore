@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+.venv/
+.conda/
+
+# Preserve research results by default; ignore only disposable scratch files.
+results/*.tmp

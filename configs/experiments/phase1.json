@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "phase": 1,
+  "seed": 1729,
+  "n_games": 28,
+  "n_players": 8,
+  "coalition_budget": 192,
+  "max_order": 3,
+  "bootstrap_resamples": 20,
+  "confidence_z": 1.96,
+  "practical_detection_threshold": 0.25,
+  "gate_thresholds": {
+    "interaction_sign_accuracy_min": 0.97,
+    "precision_at_k_min": 0.90,
+    "recall_at_k_min": 0.90,
+    "nonzero_spearman_min": 0.90,
+    "individual_mae_max": 0.20,
+    "interaction_mae_max": 0.20,
+    "null_false_positive_rate_max": 0.05,
+    "noisy_ci_coverage_min": 0.90,
+    "true_interaction_sign_stability_min": 0.90
+  }
+}

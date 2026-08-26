@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "phase": 2,
+  "profile": "full-protocol-mock-smoke",
+  "scientific_gate_eligible": false,
+  "require_clean_git": false,
+  "seed": 2718,
+  "n_banks": 10,
+  "n_memories_per_bank": 8,
+  "query_counts_per_bank": {
+    "discovery": 20,
+    "validation": 10,
+    "test": 20
+  },
+  "max_order": 2,
+  "backend": {
+    "type": "mock",
+    "model_id": "hibermem/mock-controlled-v1",
+    "model_revision": "1",
+    "quantization": "none"
+  },
+  "generation": {
+    "do_sample": false,
+    "max_new_tokens": 8
+  },
+  "coalitions": {
+    "exact_bank_count": 2,
+    "sampled_budget": 128
+  },
+  "stability": {
+    "bootstrap_resamples": 40,
+    "top_k": 4
+  },
+  "retention": {
+    "deletion_ratios": [0.0, 0.25, 0.5, 0.7, 0.8],
+    "random_replicates": 5,
+    "storage_budget_units": ["payload_whitespace_tokens", "serialized_payload_bytes"]
+  },
+  "validation_thresholds": {
+    "full_accuracy_min": 0.8,
+    "memory_gap_min": 0.5,
+    "bank_fraction_min": 0.8
+  },
+  "gate_thresholds": {
+    "p2a": {
+      "mean_top_k_overlap_min": 0.75,
+      "mean_overlap_margin_min": 0.5,
+      "mean_sign_consistency_min": 0.9
+    },
+    "p2b": {
+      "severe_deletion_ratios": [0.7, 0.8],
+      "mean_advantage_min": 0.1,
+      "positive_bank_fraction_min": 0.8,
+      "pvalue_max": 0.05
+    }
+  }
+}

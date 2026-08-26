@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "phase": 2,
+  "profile": "rtx4050-scientific-pilot",
+  "scientific_gate_eligible": true,
+  "require_clean_git": true,
+  "seed": 2718,
+  "n_banks": 10,
+  "n_memories_per_bank": 8,
+  "query_counts_per_bank": {
+    "discovery": 20,
+    "validation": 10,
+    "test": 20
+  },
+  "max_order": 2,
+  "backend": {
+    "type": "hf_local",
+    "model_id": "HuggingFaceTB/SmolLM2-1.7B-Instruct",
+    "model_revision": "d1bb90bcfbe0f211109880f4da18da66f229c4f6",
+    "device": "cuda",
+    "dtype": "float16",
+    "quantization": "none",
+    "local_files_only": false
+  },
+  "generation": {
+    "do_sample": false,
+    "max_new_tokens": 8
+  },
+  "backend_qualification": {
+    "supported_parse_rate_min": 1.0,
+    "overall_parse_rate_min": 0.8,
+    "supported_accuracy_min": 0.75,
+    "missing_link_false_positive_rate_max": 0.25
+  },
+  "coalitions": {
+    "exact_bank_count": 2,
+    "sampled_budget": 128
+  },
+  "stability": {
+    "bootstrap_resamples": 100,
+    "top_k": 4
+  },
+  "retention": {
+    "deletion_ratios": [0.0, 0.25, 0.5, 0.7, 0.8],
+    "random_replicates": 5,
+    "storage_budget_units": ["payload_whitespace_tokens", "serialized_payload_bytes"]
+  },
+  "validation_thresholds": {
+    "full_accuracy_min": 0.8,
+    "memory_gap_min": 0.5,
+    "bank_fraction_min": 0.8
+  },
+  "gate_thresholds": {
+    "p2a": {
+      "mean_top_k_overlap_min": 0.75,
+      "mean_overlap_margin_min": 0.5,
+      "mean_sign_consistency_min": 0.9
+    },
+    "p2b": {
+      "severe_deletion_ratios": [0.7, 0.8],
+      "mean_advantage_min": 0.1,
+      "positive_bank_fraction_min": 0.8,
+      "pvalue_max": 0.05
+    }
+  }
+}
