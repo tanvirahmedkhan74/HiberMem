@@ -191,6 +191,7 @@ def make_backend(config: Mapping[str, object]) -> LLMBackend:
             dtype=str(config.get("dtype", "float16")),
             quantization=str(config.get("quantization", "none")),
             local_files_only=bool(config.get("local_files_only", False)),
+            trust_remote_code=bool(config.get("trust_remote_code", False)),
         )
     raise ValueError(f"unsupported Phase 2 backend type: {backend_type}")
 
@@ -600,7 +601,9 @@ def create_phase2_run(
     _validate_config(config, root)
     backend = backend or make_backend(config["backend"])
     _validate_config(config, root, backend)
-    dataset = generate_phase2_dataset(int(config["n_banks"]))
+    dataset = generate_phase2_dataset(
+        int(config["n_banks"]), bank_start=int(config.get("bank_start", 0))
+    )
     expected_counts = config["query_counts_per_bank"]
     for split in QuerySplit:
         observed = len(dataset.view(split).queries) // len(dataset.banks)
@@ -869,7 +872,9 @@ def run_phase2_test(
     _validate_config(config, root)
     backend = backend or make_backend(config["backend"])
     _validate_config(config, root, backend)
-    dataset: ControlledDataset = generate_phase2_dataset(int(config["n_banks"]))
+    dataset: ControlledDataset = generate_phase2_dataset(
+        int(config["n_banks"]), bank_start=int(config.get("bank_start", 0))
+    )
     test_view = dataset.view(QuerySplit.TEST)
     discovery = json.loads((run_dir / "discovery.json").read_text(encoding="utf-8"))
     validation = json.loads((run_dir / "validation.json").read_text(encoding="utf-8"))

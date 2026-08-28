@@ -4,7 +4,9 @@ HiberMem is currently a causal memory-interaction study, not a full agent-memory
 framework. The repository follows the phase gates in
 [`HiberMem_MASTER_RESEARCH_IMPLEMENTATION_PLAN.md`](HiberMem_MASTER_RESEARCH_IMPLEMENTATION_PLAN.md).
 
-Current status: **Phase 1 passed; Phase 2 is implemented and awaiting the real-model run**.
+Current status: **Phases 0 and 1 passed; the first scientifically eligible
+Phase 2 discovery/validation pilot failed its unlock prerequisites. The held-out
+test remains locked and Phase 3 is blocked.**
 
 The independent pre-implementation review is in
 [`docs/PRE_IMPLEMENTATION_AUDIT.md`](docs/PRE_IMPLEMENTATION_AUDIT.md). It approves
@@ -50,6 +52,10 @@ GPU.
 The Phase 1 protocol and interpretation are recorded in
 [`docs/PHASE1_VALIDATION.md`](docs/PHASE1_VALIDATION.md).
 
+The current goal, completed evidence, remaining gates, and cross-project
+boundary are summarized in
+[`docs/RESEARCH_STATUS_2026-08-29.md`](docs/RESEARCH_STATUS_2026-08-29.md).
+
 ## Phase 2
 
 The Phase 2 implementation and locked gate criteria are in
@@ -57,24 +63,33 @@ The Phase 2 implementation and locked gate criteria are in
 full mock protocol has passed as an engineering check, but it is explicitly not
 scientific evidence and does not pass Gate P2.
 
-The pinned SmolLM2 backend has also passed the discovery-only qualification on
-the local RTX 4050. The next scientific action is the separately gated
-discovery/validation run after committing the frozen source revision.
+The pinned SmolLM2 backend passed discovery-only qualification on the local RTX
+4050. The subsequent scientific pilot failed P2-A interaction stability and
+validation task readiness. Gate P2 is undecided because the held-out P2-B test
+was correctly left locked. The complete evidence and the next Phase 2-R
+model/task-dependence plan are in
+[`docs/PHASE2_DISCOVERY_VALIDATION_ANALYSIS.md`](docs/PHASE2_DISCOVERY_VALIDATION_ANALYSIS.md).
 
-Install the optional local-model runtime and qualify the model on discovery-only
-prompts before the long run:
+The optional local-model runtime was installed and qualified with:
 
 ```powershell
 python -m pip uninstall -y torch torchvision
 python -m pip install torch torchvision --index-url https://download.pytorch.org/whl/cu130
 python -m pip install -e ".[dev,reference,llm]"
 python scripts\check_phase2_backend.py --config configs\experiments\phase2_local_4050.json
-python scripts\run_phase2.py --stage discovery-validation --config configs\experiments\phase2_local_4050.json
 ```
 
-The scientific profile requires a clean Git commit. Test remains inaccessible
-until validation passes and an explicit unlock is recorded. See
-[`HANDOFF.md`](HANDOFF.md) for the exact continuation commands.
+Do not unlock or test the completed negative pilot. A revised experiment must
+use a new version, fresh confirmation banks, a clean Git commit, and the same
+predeclared gates. See [`HANDOFF.md`](HANDOFF.md) for the exact current boundary.
+
+The Phase 2-R Kaggle workflow is implemented in
+[`docs/PHASE2R_KAGGLE_EXECUTION.md`](docs/PHASE2R_KAGGLE_EXECUTION.md). It first
+screens pinned Qwen3-4B-Instruct-2507 and Phi-4-mini-instruct models on fresh
+development banks, then freezes a separate fresh-bank confirmation config only
+when a candidate qualifies. The supplied `State-Nuisance-Geometry` GitHub URL
+is a different video project and must not be used; publish this HiberMem tree to
+a dedicated GitHub repository before launching Kaggle.
 
 ## Mathematical conventions
 

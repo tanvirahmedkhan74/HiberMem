@@ -54,3 +54,12 @@ def test_mock_backend_requires_the_expected_memory_dependency() -> None:
     assert view.score(direct, parse_action(direct_output, direct.options)) == 1.0
     assert view.score(final, parse_action(final_incomplete, final.options)) == 0.0
     assert view.score(final, parse_action(final_complete, final.options)) == 1.0
+
+
+def test_bank_start_creates_fresh_deterministic_banks() -> None:
+    original = generate_phase2_dataset(2)
+    calibration = generate_phase2_dataset(2, bank_start=100)
+
+    assert [bank.bank_id for bank in calibration.banks] == ["bank-100", "bank-101"]
+    assert calibration.sha256() == generate_phase2_dataset(2, bank_start=100).sha256()
+    assert calibration.sha256() != original.sha256()

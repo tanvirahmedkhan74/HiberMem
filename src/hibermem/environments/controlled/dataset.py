@@ -217,7 +217,9 @@ def _append_query(
     answers[query_id] = answer
 
 
-def generate_phase2_dataset(n_banks: int = 10) -> ControlledDataset:
+def generate_phase2_dataset(
+    n_banks: int = 10, *, bank_start: int = 0
+) -> ControlledDataset:
     """Generate independent nonce-token routing environments.
 
     Each bank has four two-step chains. One discovery/test query per chain asks
@@ -228,11 +230,14 @@ def generate_phase2_dataset(n_banks: int = 10) -> ControlledDataset:
 
     if isinstance(n_banks, bool) or not isinstance(n_banks, int) or n_banks < 1:
         raise ValueError("n_banks must be a positive integer")
+    if isinstance(bank_start, bool) or not isinstance(bank_start, int) or bank_start < 0:
+        raise ValueError("bank_start must be a non-negative integer")
     banks: list[MemoryBank] = []
     queries: list[Query] = []
     answers: dict[str, str] = {}
 
-    for bank_index in range(n_banks):
+    for relative_index in range(n_banks):
+        bank_index = bank_start + relative_index
         bank_id = f"bank-{bank_index:02d}"
         requests, routes, destinations = _tokens(bank_index)
         memories: list[MemoryItem] = []

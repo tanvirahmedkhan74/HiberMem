@@ -19,6 +19,7 @@ class HFLocalBackend(LLMBackend):
         dtype: str = "float16",
         quantization: str = "none",
         local_files_only: bool = False,
+        trust_remote_code: bool = False,
     ) -> None:
         if quantization != "none":
             raise ValueError("the initial local backend supports quantization='none' only")
@@ -45,17 +46,20 @@ class HFLocalBackend(LLMBackend):
         self.quantization = quantization
         self.device = device
         self.dtype = dtype
+        self.trust_remote_code = trust_remote_code
         self._torch = torch
         self._tokenizer = AutoTokenizer.from_pretrained(
             model_id,
             revision=model_revision,
             local_files_only=local_files_only,
+            trust_remote_code=trust_remote_code,
         )
         model_kwargs = {
             "revision": model_revision,
             "dtype": dtype_map[dtype],
             "low_cpu_mem_usage": True,
             "local_files_only": local_files_only,
+            "trust_remote_code": trust_remote_code,
         }
         try:
             self._model = AutoModelForCausalLM.from_pretrained(
@@ -106,5 +110,11 @@ class HFLocalBackend(LLMBackend):
 
     def provenance(self) -> dict[str, str]:
         provenance = super().provenance()
-        provenance.update({"device": self.device, "dtype": self.dtype})
+        provenance.update(
+            {
+                "device": self.device,
+                "dtype": self.dtype,
+                "trust_remote_code": str(self.trust_remote_code).lower(),
+            }
+        )
         return provenance

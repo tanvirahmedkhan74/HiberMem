@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "phase": "2-R",
+  "profile": "kaggle-stable-small-model-screen-v1",
+  "scientific_gate_eligible": false,
+  "seed": 2718,
+  "calibration": {
+    "n_banks": 10,
+    "bank_start": 100,
+    "reserved_confirmation_bank_start": 200,
+    "splits": ["discovery", "validation"],
+    "scope": "development-only; current and held-out Phase 2 test banks are excluded"
+  },
+  "generation": {
+    "do_sample": false,
+    "max_new_tokens": 8
+  },
+  "qualification_thresholds": {
+    "full_direct_accuracy_min": 0.9,
+    "full_two_hop_accuracy_min": 0.8,
+    "memory_gap_min": 0.5,
+    "full_parse_rate_min": 0.98,
+    "missing_link_false_positive_rate_max": 0.25,
+    "passing_bank_fraction_min": 0.8
+  },
+  "candidates": [
+    {
+      "label": "Qwen3 4B Instruct 2507",
+      "role": "primary stable non-thinking candidate",
+      "backend": {
+        "type": "hf_local",
+        "model_id": "Qwen/Qwen3-4B-Instruct-2507",
+        "model_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+        "device": "cuda",
+        "dtype": "float16",
+        "quantization": "none",
+        "local_files_only": false,
+        "trust_remote_code": false
+      }
+    },
+    {
+      "label": "Phi-4 Mini Instruct",
+      "role": "independent 3.8B reasoning and instruction-following candidate",
+      "backend": {
+        "type": "hf_local",
+        "model_id": "microsoft/Phi-4-mini-instruct",
+        "model_revision": "cfbefacb99257ffa30c83adab238a50856ac3083",
+        "device": "cuda",
+        "dtype": "float16",
+        "quantization": "none",
+        "local_files_only": false,
+        "trust_remote_code": true
+      }
+    }
+  ]
+}

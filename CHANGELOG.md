@@ -3,7 +3,65 @@
 All notable research and implementation changes are recorded here. Scientific
 gate status is stated separately from engineering smoke-test status.
 
+## 2026-08-29
+
+### Phase 2-R Kaggle model screen implemented
+
+- Audited the supplied `State-Nuisance-Geometry` GitHub URL and found that it is
+  a different `state-geometry-video`/`vjepa2` project. Added fail-fast Kaggle
+  repository identity checks rather than executing HiberMem commands there.
+- Added fresh deterministic bank ranges so development calibration uses banks
+  100–109 and a later confirmation can reserve banks 200–209 without reusing
+  the exposed Phase 2 pilot banks.
+- Added a development-only 2,760-generation model screen with full, empty,
+  direct-minimal, pair-only, missing-first-link, and missing-second-link
+  conditions across all discovery and validation templates.
+- Pinned `Qwen/Qwen3-4B-Instruct-2507` and
+  `microsoft/Phi-4-mini-instruct` at immutable Hugging Face revisions for the
+  stable 4B-class Kaggle matrix.
+- Added stronger bank-level qualification for direct accuracy, two-hop
+  accuracy, memory gap, parse rate, missing-link false positives, and passing
+  bank prevalence. Screening remains explicitly ineligible for Gate P2.
+- Added Kaggle package pins, CUDA/storage/repository validation, resumable
+  SQLite caches, progressive JSON reports, CUDA cleanup between models, and a
+  downloadable artifact bundle.
+- Added a freeze tool that creates a fresh-bank scientific confirmation config
+  only after a model qualifies, plus an exact-commit Kaggle confirmation
+  launcher that never unlocks test automatically.
+- Added a tracked P1 gate certificate tied to the verified report SHA-256 so a
+  clean GitHub clone can establish the prerequisite without committing large
+  research outputs.
+- Documented the two-session screen/freeze/commit/confirmation sequence in
+  `docs/PHASE2R_KAGGLE_EXECUTION.md`.
+- Expanded the complete local test suite to 55 passing tests.
+
 ## 2026-08-27
+
+### Phase 2 scientific discovery/validation completed with a negative result
+
+- Completed the first scientifically eligible local-model discovery and
+  validation run at
+  `results/phase2/20260826T195924.594962Z/report.json`, containing 30,720
+  discovery evaluations and 2,800 unique validation evaluations.
+- P2-A failed: mean split-half top-4 overlap was 0.55 against 0.75, and mean
+  margin over random ranking was 0.407143 against 0.50. Mean top-pair sign
+  consistency passed at 0.9705, but all P2-A checks are required.
+- Validation readiness failed: mean full-memory accuracy was 0.58, mean
+  empty-memory accuracy 0.13, mean memory gap 0.45, and zero of ten banks met
+  the joint readiness requirements.
+- Diagnosed the base-task failure as primarily two-hop behavior: full-memory
+  validation accuracy was 0.85 on direct queries and 0.5125 on two-hop queries,
+  with no full-context parse failures.
+- Recorded validation-only retention curves. The severe-deletion
+  Interaction-over-Item diagnostic averaged 0.01 and is not a P2-B result.
+- Kept the held-out test locked. Gate P2 remains undecided and Phase 3 remains
+  blocked.
+- Added `docs/PHASE2_DISCOVERY_VALIDATION_ANALYSIS.md` with the complete methods,
+  evidence, interpretation, and Phase 2-R model/task-dependence plan.
+- Corrected the Phase 2 runner so failed validation says that the test remains
+  locked instead of printing a generic unlock resume instruction.
+- Added a regression test for the failed-validation CLI path, bringing the
+  suite at that checkpoint to 49 tests.
 
 ### CUDA 13.0 runtime selected
 

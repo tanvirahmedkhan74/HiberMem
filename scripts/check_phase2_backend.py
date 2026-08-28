@@ -24,7 +24,7 @@ def main() -> int:
     config_path = args.config if args.config.is_absolute() else ROOT / args.config
     config = json.loads(config_path.read_text(encoding="utf-8"))
     backend = make_backend(config["backend"])
-    dataset = generate_phase2_dataset(1)
+    dataset = generate_phase2_dataset(1, bank_start=int(config.get("bank_start", 0)))
     bank = dataset.banks[0]
     view = dataset.view(QuerySplit.DISCOVERY)
     queries = view.for_bank(bank.bank_id)

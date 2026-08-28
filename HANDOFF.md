@@ -1,138 +1,144 @@
 # HiberMem Handoff
 
-**Updated:** 2026-08-27  
-**Current scientific gate:** P1 passed; P2 not yet evaluated with an LLM  
-**Current engineering state:** Phase 2 implemented; mock protocol and local backend qualification passed
+**Updated:** 2026-08-27
 
-## Verified state
+**Current scientific state:** P0 and P1 passed; first Phase 2 pilot failed P2-A and validation readiness
 
-The user independently ran the project-local Conda environment and observed:
+**Locked state:** P2-B not evaluated; Gate P2 undecided; Phase 3 blocked
 
-```text
-python -m pytest -q              36 passed
-python scripts\run_phase0.py     21 passed; Gate P0 PASS
-python scripts\run_phase1.py     Gate P1 PASS
+## Verified evidence
+
+- Phase 0: 21 phase-specific tests passed; Gate P0 passed.
+- Phase 1: Gate P1 passed at
+  `results/phase1/20260826T184454.941051Z/report.json`. Interaction sign
+  accuracy, precision@k, recall@k, nonzero Spearman, and sign stability were
+  1.0; item MAE was 0.015359, interaction MAE 0.016337, null false-positive
+  rate 0.003086, and noisy interval coverage 0.938172.
+- Engineering: 48 tests passed before the scientific run; the current suite has
+  55 tests after the locked-output and Kaggle workflow additions. The full mock
+  protocol at `results/phase2/20260826T195617.239085Z/report.json` exercised the
+  complete runner but is explicitly ineligible for scientific claims.
+- Backend: the pinned SmolLM2-1.7B CUDA backend passed qualification at
+  `results/phase2_backend_check/20260826T195523.639127Z/report.json`.
+
+## Phase 2 scientific pilot
+
+Run directory:
+
+`results/phase2/20260826T195924.594962Z`
+
+The run used the committed revision
+`3b13934c3215f921c6757276728467bdb9d4d851`, clean scientific source/config,
+dataset `phase2-routing-v4`, prompt `phase2-direct-survivors-v3`, and pinned
+`HuggingFaceTB/SmolLM2-1.7B-Instruct` revision
+`d1bb90bcfbe0f211109880f4da18da66f229c4f6` in CUDA float16.
+
+The 33,520-row SQLite cache contains the planned 30,720 discovery evaluations
+and 2,800 unique validation evaluations. There were 900 legitimate cache reuses
+for duplicate retention conditions. No test-unlock or test artifact exists.
+
+### P2-A result
+
+- mean split-half top-4 overlap: 0.55, below 0.75;
+- mean overlap margin over random: 0.407143, below 0.50;
+- mean top-pair sign consistency: 0.9705, above 0.90;
+- decision: **FAIL**, because all checks are required.
+
+Only three of ten banks reached 0.75 top-4 overlap. Designed chain pairs filled
+19 of the 40 top-pair positions. The two exact-enumeration banks reached only
+0.50 and 0.75 overlap, so sampled-coalition budget alone does not explain the
+failure.
+
+### Validation result
+
+- mean full-memory accuracy: 0.58;
+- mean empty-memory accuracy: 0.13;
+- mean memory gap: 0.45;
+- passing banks: 0/10; required: 8/10;
+- decision: **FAIL** and test remains locked.
+
+The main capability gap is two-hop routing. Full-memory validation accuracy was
+0.85 on direct queries but only 0.5125 on two-hop queries. Full-context outputs
+had no parser failures, so incorrect reasoning, not strict parsing, caused the
+readiness failure.
+
+Validation retention accuracy for Interaction versus Item at nominal deletion
+0.70 and 0.80 was 0.28 versus 0.28 and 0.28 versus 0.26. The combined diagnostic
+advantage was only 0.01, with four positive, three tied, and three negative
+banks. This is not a P2-B result because validation cannot substitute for the
+locked test.
+
+The runner previously printed a generic unlock resume command after a failed
+validation. The unlock function was already fail-closed, and the runner message
+has now been corrected to say that the test remains locked.
+
+## Decision and next work
+
+Do not run either of these stages against the current run:
+
+```powershell
+python scripts\run_phase2.py --stage unlock --run-dir results\phase2\20260826T195924.594962Z
+python scripts\run_phase2.py --stage test --run-dir results\phase2\20260826T195924.594962Z
 ```
 
-The verified Phase 1 artifact is
-`results/phase1/20260826T184454.941051Z/report.json`. Its reported metrics agree
-with `docs/PHASE1_VALIDATION.md`.
+Do not begin Phase 3. The master decision tree requires a Phase 2 model/task-
+dependence investigation:
 
-After Phase 2 implementation, the current suite has 48 passing tests and
-`pip check` reports no broken requirements. The full mock artifact is
-`results/phase2/20260826T195617.239085Z/report.json`; it contains 39,270 cached
-evaluations and deliberately records `gate_p2: null`.
+1. preserve this run as a negative pilot and analyze only its public splits;
+2. implement a deterministic diagnostic analyzer;
+3. create fresh calibration-only banks and expand qualification to full-bank
+   direct, two-hop, missing-link, and distractor conditions;
+4. screen the current model and a feasible stronger model/configuration only on
+   development banks;
+5. require robust two-hop full-memory behavior before spending another full
+   coalition budget;
+6. freeze one revised protocol without relaxing P2 thresholds;
+7. use fresh confirmation banks and a new locked test;
+8. unlock that new test only if both P2-A and validation readiness pass.
 
-The local SmolLM2 backend qualification passed at
-`results/phase2_backend_check/20260826T195523.639127Z/report.json` with 1.0
-supported parse rate, 1.0 supported accuracy, 0.916667 overall parse rate, and
-0.25 missing-link false-positive rate. It used discovery queries only and is not
-P2 evidence.
+The full evidence, methods, tables, interpretation, and Phase 2-R plan are in
+`docs/PHASE2_DISCOVERY_VALIDATION_ANALYSIS.md`.
 
-## Plan verification and next gate
+## Kaggle Phase 2-R implementation
 
-Phase 2 is the correct next scientific step because P0 and P1 passed. Phase 3
-remains prohibited until a real small instruction model passes both P2-A
-(stable interaction ranking) and P2-B (repeatable held-out severe-deletion
-advantage).
+The next development experiment is implemented but has not been run. It screens
+two immutable 4B-class candidates on fresh banks 100–109:
 
-The implemented Phase 2 protocol satisfies the approved boundary:
+- `Qwen/Qwen3-4B-Instruct-2507` at
+  `cdbee75f17c01a7cc42f958dc650907174af0554`;
+- `microsoft/Phi-4-mini-instruct` at
+  `cfbefacb99257ffa30c83adab238a50856ac3083`.
 
-- 10 banks, 8 memories each, and 20/10/20 split queries;
-- exact 256-coalition enumeration for 2 banks and 128 size-balanced coalitions
-  for the remaining 8, reducing discovery inference from 51,200 to 30,720;
-- discovery-only interaction fitting and retention-mask construction;
-- P2-A discovery stability and validation readiness before a separately
-  recorded one-way test unlock;
-- all surviving memories supplied directly, with no retrieval system;
-- deterministic greedy output capped at 8 tokens and strict option parsing;
-- Random, ordinary-Shapley item-value, and interaction-aware policies;
-- payload-token and serialized-byte budgets matched exactly across policies;
-- bank-level P2 decisions and a paired sign-flip test;
-- no graph retrieval, lesion system, RL, regrowth, training, or later-phase
-  scaffolding.
+The screen uses 1,380 generations per model and evaluates full/empty context,
+minimal direct support, exact two-hop pairs, both missing-link directions, all
+public template families, parse behavior, and per-bank readiness. It is
+development-only and cannot pass Gate P2.
 
-The nominal 0.70 and 0.80 deletion points are discrete for eight memories. The
-runner keeps 3 and 2 memories respectively and records the actual deletion
-ratios (0.625 and 0.75) instead of hiding the rounding.
+The supplied GitHub repository,
+`https://github.com/tanvirahmedkhan74/State-Nuisance-Geometry.git`, is not
+HiberMem; it declares project `state-geometry-video` and contains `vjepa2` code.
+This local HiberMem checkout has no remote configured. The Kaggle launchers
+therefore require a configurable repository URL and verify project identity
+before installation. Publish this tree to a dedicated HiberMem repository
+before running Kaggle.
 
-## Environment hygiene
+If a screen candidate qualifies, the freeze tool writes a new confirmation
+config using banks 200–209 and unchanged P2 thresholds. That config must be
+reviewed, committed, and pushed. The confirmation launcher accepts only an
+exact 40-character commit and runs discovery/validation only; test remains
+locked. Full commands are in `docs/PHASE2R_KAGGLE_EXECUTION.md`.
 
-The pasted prompt showed both `.venv` and `.conda` active. Do not keep both
-active. Open a clean shell for future scientific runs, or deactivate `.venv`
-before activating the Conda prefix. The verified interpreter is:
+## Environment
 
-```text
-D:\Coding\paper\hibermem\.conda\python.exe
-Python 3.11.15
-```
-
-The detected GPU is an NVIDIA GeForce RTX 4050 Laptop GPU with 6141 MiB VRAM.
-The project environment now contains the verified CUDA wheel pair:
-
-```text
-torch       2.13.0+cu130
-torchvision 0.28.0+cu130
-CUDA        13.0
-transformers 5.16.1
-accelerate   1.14.0
-```
-
-PyTorch reports `cuda available: True` and completed a CUDA tensor operation on
-the RTX 4050. The pinned reconstruction file is
-`configs/requirements/torch-cu130.txt`.
-
-## Blocking prerequisites for the real Phase 2 run
-
-1. The Git repository has no commits yet. The scientific profile intentionally
-   refuses to start without a committed revision and clean source/config files.
-   Research outputs under `results/` may be uncommitted during a resumable run.
-   Review and create the initial commit before discovery.
-2. The expected scientific workload is long: 30,720 discovery generations plus
-   validation/test retention conditions. Every result is immediately cached,
-   so the same command resumes safely.
-
-## Exact next sequence
-
-Run from a fresh PowerShell window:
+Use a fresh shell with only the project-local Conda prefix active:
 
 ```powershell
 cd D:\Coding\paper\hibermem
 conda activate D:\Coding\paper\hibermem\.conda
 python -m pytest -q
-python -c "import torch; print(torch.__version__); print(torch.cuda.is_available()); print(torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'NO CUDA')"
 ```
 
-To reconstruct the verified CUDA runtime in a fresh project environment, use:
-
-```powershell
-python -m pip uninstall -y torch torchvision
-python -m pip install torch torchvision --index-url https://download.pytorch.org/whl/cu130
-python -m pip install -e ".[dev,reference,llm]"
-```
-
-The backend check has passed. Commit the reviewed source and start only the
-discovery/validation stage:
-
-```powershell
-git status --short
-git add -- . ':(exclude)results/**'
-git commit -m "Implement gated Phase 2 coalition experiment"
-python scripts\run_phase2.py --stage discovery-validation --config configs\experiments\phase2_local_4050.json
-```
-
-The exclusion keeps large resumable caches out of the initial source commit;
-untracked files under `results/` are expected and do not count as source/config
-changes in the scientific preflight.
-
-The command prints the run directory. Review that run's `report.json` and
-`validation.json`. If and only if validation reports
-`ready_for_test_unlock: true`, continue with that exact directory:
-
-```powershell
-python scripts\run_phase2.py --stage unlock --run-dir results\phase2\<RUN_ID>
-python scripts\run_phase2.py --stage test --run-dir results\phase2\<RUN_ID>
-```
-
-Do not edit the config, dataset, prompt, or source between discovery and test;
-the runner checks the config hash, dataset hash, and Git commit.
+The verified environment uses Python 3.11.15, PyTorch 2.13.0+cu130,
+torchvision 0.28.0+cu130, Transformers 5.16.1, and accelerate 1.14.0 on the
+NVIDIA GeForce RTX 4050 Laptop GPU. Do not activate `.venv` and `.conda`
+simultaneously.

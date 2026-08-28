@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "phase": 1,
+  "gate": "P1",
+  "gate_passed": true,
+  "run_id": "20260826T184454.941051Z",
+  "generated_at_utc": "2026-08-26T18:44:54.941051+00:00",
+  "config_sha256": "1874b4c3c3cd0ee9ec6fd798408e39ea1513caec3ee7a4bc6067ad3d8cf03077",
+  "source_report_sha256": "5770b98cf57d2c9ed27c85b05e21a1dbb1504ffb16565ee1fcb7b1c72c0f1747",
+  "aggregate_metrics": {
+    "interaction_sign_accuracy": 1.0,
+    "precision_at_k": 1.0,
+    "recall_at_k": 1.0,
+    "nonzero_spearman": 1.0,
+    "individual_mae": 0.015359157158600829,
+    "interaction_mae": 0.016336958621442084,
+    "null_false_positive_rate": 0.0030864197530864196,
+    "noisy_ci_coverage": 0.9381720430107527,
+    "true_interaction_sign_stability": 1.0
+  },
+  "scope": "tracked certificate for clean remote execution; full report remains in results/phase1"
+}

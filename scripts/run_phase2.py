@@ -14,6 +14,7 @@ from hibermem.experiments import create_phase2_run, run_phase2_test, unlock_phas
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_CONFIG = ROOT / "configs" / "experiments" / "phase2_mock.json"
 PHASE1_REPORT = ROOT / "results" / "phase1_report.json"
+PHASE1_CERTIFICATE = ROOT / "configs" / "gates" / "phase1_pass.json"
 LATEST_REPORT = ROOT / "results" / "phase2_report.json"
 
 
@@ -34,10 +35,15 @@ def _resolve(path: Path) -> Path:
 
 
 def _require_phase1() -> None:
-    if not PHASE1_REPORT.exists():
-        raise SystemExit("Phase 1 report is missing; Phase 2 is gated")
-    report = json.loads(PHASE1_REPORT.read_text(encoding="utf-8"))
-    if not report.get("gate_passed"):
+    source = PHASE1_REPORT if PHASE1_REPORT.exists() else PHASE1_CERTIFICATE
+    if not source.exists():
+        raise SystemExit("Phase 1 report/certificate is missing; Phase 2 is gated")
+    report = json.loads(source.read_text(encoding="utf-8"))
+    if (
+        report.get("phase") != 1
+        or report.get("gate") != "P1"
+        or not report.get("gate_passed")
+    ):
         raise SystemExit("Gate P1 has not passed; refusing to run Phase 2")
 
 
@@ -82,8 +88,11 @@ def main() -> int:
         )
         if args.stage == "discovery-validation":
             _latest(run_dir / "report.json")
-            print(f"Resume with --stage unlock --run-dir {run_dir}")
-            return 0 if report["validation"]["ready_for_test_unlock"] else 1
+            if report["validation"]["ready_for_test_unlock"]:
+                print(f"Resume with --stage unlock --run-dir {run_dir}")
+                return 0
+            print("Test remains locked; do not run the unlock or test stage")
+            return 1
 
     if args.stage in {"unlock", "smoke"}:
         unlock = unlock_phase2_test(run_dir=run_dir)

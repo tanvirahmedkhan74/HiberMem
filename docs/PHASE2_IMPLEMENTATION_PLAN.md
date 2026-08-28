@@ -1,15 +1,19 @@
 # Phase 2 Implementation and Execution Plan
 
-**Plan status:** implementation and local backend qualification complete; discovery pending  
-**Scientific status:** Gate P2 not evaluated  
+**Plan status:** implementation complete; first discovery/validation run failed its unlock prerequisites
+
+**Scientific status:** P2-A failed, validation readiness failed, P2-B not evaluated, Gate P2 undecided
+
 **Prerequisite:** Gate P1 passed on 2026-08-27 local verification
 
 ## 1. Decision
 
-Proceed with Phase 2 only. The next claim to test is whether a fixed LLM using
-external natural-language memory exhibits stable pairwise coalition structure
-that improves prospective retention beyond a strong item-value baseline. No
-Phase 3 lesion work is authorized by the current evidence.
+The first scientifically eligible Phase 2 pilot is complete through validation.
+It did not establish stable pairwise coalition structure and did not meet the
+base-task threshold required to unlock its held-out test. Preserve it as a
+negative result and proceed only to a separately versioned Phase 2 model/task-
+dependence investigation. No Phase 3 lesion work is authorized by the current
+evidence.
 
 The full 256-coalition design for every bank would require 51,200 discovery
 generations. The approved pilot therefore enumerates all 256 coalitions for two
@@ -125,11 +129,10 @@ ranking, or P2-B failure is a valid negative result and blocks Phase 3.
 - Random, Item, and Interaction retention policies;
 - normalized memory-survival metrics;
 - staged runner, explicit unlock, model qualification, and local 4050 config;
-- full mock protocol and 48-test verification.
+- full mock protocol and 55-test verification.
 
-The mock result is an engineering acceptance test only. The next scientific
-artifact must come from `configs/experiments/phase2_local_4050.json` on the
-pinned local model.
+The mock result is an engineering acceptance test only. The first scientific
+artifact using `configs/experiments/phase2_local_4050.json` is analyzed below.
 
 ## 6. Backend qualification result
 
@@ -139,3 +142,28 @@ missing-link accidental correctness was 0.25. Earlier qualification attempts
 exposed a surface suffix shortcut and insufficient two-hop instructions. Those
 were corrected before any scientific discovery run or test unlock by separating
 request/route/destination identifier alphabets and freezing prompt version v3.
+
+## 7. Discovery/validation result and amended next step
+
+The scientifically eligible run at
+`results/phase2/20260826T195924.594962Z/report.json` failed P2-A and validation
+readiness. Mean split-half top-4 overlap was 0.55, mean overlap margin over
+random was 0.407143, and mean top-pair sign consistency was 0.9705. Full-memory
+validation accuracy averaged 0.58, the memory gap averaged 0.45, and zero of ten
+banks met the joint readiness thresholds. The test remains locked and P2-B was
+not evaluated.
+
+The next authorized work is Phase 2-R: preserve this negative pilot, diagnose
+public-split query and coefficient behavior, expand qualification to the full
+bank/template distribution, screen model/task variants on separate development
+banks, and use fresh confirmation banks for any new scientific run. Thresholds
+must not be relaxed based on this failure. See
+`docs/PHASE2_DISCOVERY_VALIDATION_ANALYSIS.md` for the complete evidence and
+implementation plan.
+
+The development screen and fresh-confirmation handoff are now implemented for
+Kaggle. They use new bank ranges, two pinned 4B-class models, stronger bank-level
+two-hop qualification, a tracked P1 gate certificate, and exact-commit
+launchers. See `docs/PHASE2R_KAGGLE_EXECUTION.md`. Kaggle execution remains
+blocked until HiberMem is published to a correct GitHub repository; the supplied
+`State-Nuisance-Geometry` URL points to another project.
