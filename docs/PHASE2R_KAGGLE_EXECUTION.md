@@ -90,6 +90,13 @@ Safetensors 0.8.0, installs HiberMem editable, verifies CUDA and repository
 identity, runs all tests, executes the screen, and packages the reports and
 caches.
 
+On a smaller 19 GiB Kaggle image, do **not** run both candidates from one
+shared Hugging Face cache. Run each candidate in a separate screen invocation,
+archive its artifacts, delete the model cache, and then run the next candidate.
+Set `HIBERMEM_MIN_FREE_STORAGE_GIB=15` for that explicit low-storage workflow;
+the verifier otherwise retains its conservative 30 GiB default. Keep at least
+15 GiB free before downloading a single model.
+
 ## 5. Publish HiberMem to GitHub
 
 Review the local changes and create a dedicated GitHub repository first. From a

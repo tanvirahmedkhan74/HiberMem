@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import importlib.metadata
 import json
+import os
 import shutil
 import subprocess
 import tomllib
@@ -15,6 +16,25 @@ from packaging.version import Version
 
 
 ROOT = Path(__file__).resolve().parents[1]
+DEFAULT_MIN_FREE_STORAGE_GIB = 30.0
+
+
+def configured_min_free_storage_gib() -> float:
+    """Read an explicit, validated Kaggle storage floor from the environment."""
+    raw_value = os.environ.get("HIBERMEM_MIN_FREE_STORAGE_GIB")
+    if raw_value is None:
+        return DEFAULT_MIN_FREE_STORAGE_GIB
+    try:
+        value = float(raw_value)
+    except ValueError as error:
+        raise RuntimeError(
+            "HIBERMEM_MIN_FREE_STORAGE_GIB must be a positive number of GiB"
+        ) from error
+    if value <= 0:
+        raise RuntimeError(
+            "HIBERMEM_MIN_FREE_STORAGE_GIB must be a positive number of GiB"
+        )
+    return value
 
 
 def _git(root: Path, *args: str) -> str:
@@ -27,7 +47,9 @@ def _git(root: Path, *args: str) -> str:
     ).stdout.strip()
 
 
-def verify(root: Path) -> dict[str, object]:
+def verify(
+    root: Path, *, min_free_storage_gib: float | None = None
+) -> dict[str, object]:
     project = tomllib.loads((root / "pyproject.toml").read_text(encoding="utf-8"))
     project_name = str(project["project"]["name"])
     if project_name != "hibermem":
@@ -48,9 +70,19 @@ def verify(root: Path) -> dict[str, object]:
             "unexpected Transformers version; install configs/requirements/"
             f"kaggle-phase2r.txt (found {transformers_version})"
         )
+    required_free_storage_gib = (
+        configured_min_free_storage_gib()
+        if min_free_storage_gib is None
+        else min_free_storage_gib
+    )
+    if required_free_storage_gib <= 0:
+        raise ValueError("min_free_storage_gib must be positive")
     free_bytes = shutil.disk_usage(root).free
-    if free_bytes < 30 * 1024**3:
-        raise RuntimeError("at least 30 GiB of free working storage is required")
+    if free_bytes < required_free_storage_gib * 1024**3:
+        raise RuntimeError(
+            "at least "
+            f"{required_free_storage_gib:g} GiB of free working storage is required"
+        )
     return {
         "schema_version": 1,
         "checked_at_utc": datetime.now(timezone.utc).isoformat(),
@@ -72,6 +104,7 @@ def verify(root: Path) -> dict[str, object]:
             ],
         },
         "free_storage_gib": free_bytes / 1024**3,
+        "required_free_storage_gib": required_free_storage_gib,
     }
 
 
