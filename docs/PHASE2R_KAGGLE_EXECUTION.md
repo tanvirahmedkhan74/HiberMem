@@ -43,6 +43,12 @@ Both selected candidates run in float16 without quantization. Their weights fit
 a 16 GiB Kaggle GPU one at a time; the screening runner explicitly releases one
 model and clears the CUDA cache before loading the next.
 
+Phi-4-mini-instruct uses the native `phi3` implementation in the pinned
+Transformers release (`trust_remote_code: false`). The pinned repository's
+legacy remote implementation imports an internal utility absent from
+Transformers 5.16.1, so remote execution would make this otherwise standard
+architecture fail before inference.
+
 ## 3. What the development screen measures
 
 The previous 12-case qualification overestimated real two-hop performance. The

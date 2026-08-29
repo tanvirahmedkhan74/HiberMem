@@ -49,7 +49,7 @@
         "dtype": "float16",
         "quantization": "none",
         "local_files_only": false,
-        "trust_remote_code": true
+        "trust_remote_code": false
       }
     }
   ]
