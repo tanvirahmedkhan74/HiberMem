@@ -60,9 +60,42 @@ def test_mock_screen_resume_identity_and_evidence_validation(tmp_path, config):
         validate_report(directory / "report.json", allow_mock=True)
 
 
-def test_real_screen_requires_clean_committed_source(tmp_path, config):
+@pytest.mark.parametrize("available,source_dirty", [(False, None), (True, True)],
+                         ids=["unavailable-git", "dirty-source"])
+def test_real_screen_requires_clean_committed_source(tmp_path, config, monkeypatch,
+                                                    available, source_dirty):
+    # A workspace-local tmp_path inherits the parent checkout's Git state.
+    # Explicitly model each rejection state rather than depending on that state.
+    monkeypatch.setattr("scripts.run_phase2r_v2.git_provenance", lambda _: {
+        "available": available, "source_dirty": source_dirty, "commit": "a" * 40,
+    })
+    monkeypatch.setattr("scripts.run_phase2r_v2.make_backend",
+                        lambda *_: pytest.fail("rejected source reached backend construction"))
     with pytest.raises(RuntimeError, match="commit"):
         run_v2(root=tmp_path, config=config, candidate_name="qwen", run_dir=tmp_path / "screen")
+    assert not (tmp_path / "screen").exists()
+
+
+@pytest.mark.parametrize("use_workspace_root", [False, True], ids=["nested-root", "workspace-root"])
+def test_clean_source_reaches_only_a_stubbed_backend(tmp_path, config, monkeypatch,
+                                                    use_workspace_root):
+    monkeypatch.setattr("scripts.run_phase2r_v2.git_provenance", lambda _: {
+        "available": True, "source_dirty": False, "commit": "a" * 40,
+    })
+    calls = []
+
+    def stopped_backend(backend_config):
+        calls.append(backend_config)
+        raise RuntimeError("stubbed backend boundary reached")
+
+    monkeypatch.setattr("scripts.run_phase2r_v2.make_backend", stopped_backend)
+    directory = tmp_path / "screen"
+    with pytest.raises(RuntimeError, match="stubbed backend boundary"):
+        run_v2(root=ROOT if use_workspace_root else tmp_path, config=config,
+               candidate_name="qwen", run_dir=directory)
+    assert calls == [config["candidates"]["qwen"]]
+    assert json.loads((directory / "report.json").read_text())["status"] == "runtime_error"
+    assert not (directory / "evaluations.sqlite3").exists()
 
 
 def test_control_only_does_not_instantiate_real_backend(tmp_path, config, monkeypatch):

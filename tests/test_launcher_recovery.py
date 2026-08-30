@@ -38,3 +38,5 @@ def test_kaggle_launcher_bypasses_ensurepip_and_targets_the_environment():
     assert "-m venv --without-pip --system-site-packages" in script
     assert '-m pip --python "${ENV_PYTHON}" install' in script
     assert "scripts/run_tests.py" in script
+    assert '--junitxml "results/phase2r_v2/${HIBERMEM_CANDIDATE}-tests.xml"' in script
+    assert 'tee "results/phase2r_v2/${HIBERMEM_CANDIDATE}-tests.log"' in script

@@ -5,6 +5,25 @@ gate status is stated separately from engineering smoke-test status.
 
 ## 2026-08-30
 
+### Clean-checkout unit-test isolation recovery
+
+- The reported `3f2c74f58fd208c763cb6757c520728e7efc6927` Kaggle attempt
+  installed dependencies and detected two Tesla T4 GPUs. It stopped with 88
+  passing tests and one assertion failure, correctly classified as exit 2.
+- Reproduced the faulty test assumption: a workspace-local pytest directory
+  inherits its parent Git checkout. On a clean checkout the supposed rejection
+  test instead initialized Qwen and completed 432 development conditions over
+  banks 300/301. This is not the intended ten-bank screen or a validated result.
+- Make unavailable/dirty Git rejection cases explicit and check clean-source
+  acceptance only at a stubbed backend boundary. Add an automatic real-backend
+  constructor guard and offline Hugging Face settings for unit tests.
+- Save launcher test logs and JUnit results in the downloadable bundle. Document
+  separate preservation of the old accidental inference artifacts in pytest
+  scratch, which the previous bundle did not include.
+- Verified 95 tests locally, including direct/factory model-load guard coverage;
+  Bash syntax and diff whitespace checks passed. Kaggle rerun remains pending.
+  No production model configuration, thresholds, or scientific gate changed.
+
 ### Kaggle bootstrap and Windows test recovery
 
 - Diagnosed the reported 5813a28 attempt as an ensurepip setup failure, not

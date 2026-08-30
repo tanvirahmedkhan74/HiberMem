@@ -2,13 +2,41 @@
 
 **Updated:** 2026-08-30
 
-**Current scientific state:** P0/P1 passed; SmolLM2 pilot and reported Qwen/Phi v1 qualification failed; v2 capability screen implemented but no real-model v2 result yet
+**Current scientific state:** P0/P1 passed; SmolLM2 pilot and reported Qwen/Phi v1 qualification failed; no validated full v2 screen yet (accidental two-bank inference occurred inside a failed unit test)
 
 **Locked state:** P2-B not evaluated; Gate P2 undecided; Phase 3 blocked
 
 ## Current next action — Phase 2-R v2
 
-### Setup recovery after commit 5813a28
+### Test-isolation recovery after commit 3f2c74f (current)
+
+Kaggle successfully installed the environment and detected two Tesla T4 GPUs.
+The source-rejection test incorrectly assumed that its temporary folder was
+outside Git. The workspace-local folder inherited the clean checkout, so it
+loaded Qwen and completed 432 condition records on development banks 300/301.
+Then pytest failed because the expected rejection never occurred: 88 passed,
+1 failed. The launcher correctly stopped at stage `tests`, exit 2, without
+reaching its intended controls/full-screen stages. There is no reported model
+qualification decision, and no confirmation/test access occurred.
+
+The previous repair's dirty local checkout masked this test assumption. It is
+now replaced by explicit unavailable/dirty source states plus clean-state tests
+that stop at a stubbed backend. An automatic fixture prohibits real backend
+construction throughout the unit suite and sets Hugging Face offline variables
+within test scope only. The separate screen process remains enabled. Launcher
+test logs and JUnit output now enter the normal artifact archive.
+
+Verification: 95 local tests passed; the actual clean-parent behavior was safely
+reproduced before edits with model construction intercepted. Bash syntax and
+diff checks passed. No production inference, thresholds, or gate code changed.
+
+Next: preserve both the old normal archive and
+`results/pytest-runs/run-dqyjld4b` on Kaggle before updating the checkout. The old
+archive excludes that scratch folder. Publish this repair and rerun using its
+new full commit hash; reuse cached weights but never copy the accidental test
+cache into the intended run. The execution guide has the exact recovery steps.
+
+### Setup recovery after commit 5813a28 (historical)
 
 The user successfully published `5813a282e05b2c34aa37dc515bf532876e4ca245`.
 The first Kaggle attempt failed during ensurepip, before Qwen evaluation; its
@@ -22,8 +50,9 @@ for validated negative screens; setup/test failures become 2. Use
 temp directory. Publish this repair and use its new commit hash to update the
 existing Kaggle clone; the execution guide includes exact recovery cells.
 Repair verification: 89 tests passed using workspace-local test scratch;
-pip-less environment targeting and Bash syntax checked locally. Kaggle rerun
-is pending and no model conclusion follows from the setup failure.
+pip-less environment targeting and Bash syntax checked locally. The subsequent
+3f2c74f attempt verified this bootstrap on Kaggle and exposed the separate test
+defect documented above. No model conclusion follows from the setup failure.
 
 Use `docs/PHASE2R_V2_IMPLEMENTATION_AND_KAGGLE.md`. The dedicated remote is now
 `git@github.com:tanvirahmedkhan74/HiberMem.git`. Source must be reviewed, committed,

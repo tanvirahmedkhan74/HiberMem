@@ -74,7 +74,9 @@ STAGE="environment_check"
 "${BASE_PYTHON}" -m pip --python "${ENV_PYTHON}" freeze > "results/phase2r_v2/${HIBERMEM_CANDIDATE}-packages.txt"
 "${ENV_PYTHON}" scripts/verify_kaggle_environment.py --output "results/phase2r_v2/${HIBERMEM_CANDIDATE}-environment.json"
 STAGE="tests"
-"${ENV_PYTHON}" scripts/run_tests.py
+"${ENV_PYTHON}" scripts/run_tests.py -q \
+  --junitxml "results/phase2r_v2/${HIBERMEM_CANDIDATE}-tests.xml" \
+  2>&1 | tee "results/phase2r_v2/${HIBERMEM_CANDIDATE}-tests.log"
 STAGE="controls"
 "${ENV_PYTHON}" scripts/run_phase2r_v2.py --candidate "${HIBERMEM_CANDIDATE}" \
   --controls-only --run-dir "results/phase2r_v2/${HIBERMEM_CANDIDATE}-controls"

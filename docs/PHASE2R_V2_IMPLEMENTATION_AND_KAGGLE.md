@@ -5,7 +5,103 @@
 **Delivery:** safeguards, a fresh development capability screen, symbolic/shortcut
 controls, an artifact validator, public-pilot diagnostics, and a Kaggle launcher.
 
-## Recovery from the 5813a28 setup failure
+## Current recovery: 3f2c74f test failure after successful setup
+
+The Kaggle log confirms successful package installation and detection of two
+Tesla T4 GPUs. The result was **88 tests passed, one failed; launcher exit 2 at
+stage tests**. The failing test expected `tmp_path` to have no committed source,
+but Git discovers the parent repository from nested directories. The new
+workspace-owned temp folder therefore inherited Kaggle's clean source state.
+The previous local verification had uncommitted edits, masking this assumption.
+
+Qwen actually loaded inside that test and completed **432 condition records on
+development banks 300/301**. The intended ten-bank screen never started. The log
+does not provide model qualification metrics; this is neither a qualified nor
+negative screen, and no confirmation/test bank was used. Do not retune the
+preregistered thresholds using these accidental outputs.
+
+The repair explicitly supplies dirty/unavailable Git states for rejection tests,
+checks clean-state acceptance against a stubbed backend, and prohibits real
+backend construction in all unit tests. Offline Hugging Face settings are scoped
+to tests, not the later screen. It also bundles test logs/JUnit results. Local
+verification: **95 tests passed**; Bash syntax and whitespace checks passed.
+Kaggle verification of this repair is still pending.
+
+### A. Preserve the accidental outputs in the existing Kaggle session
+
+Download the existing `hibermem-v2-qwen-3f2c74f58fd2-artifacts.tar.gz` first.
+That archive includes launcher/environment diagnostics, but **not** the pytest
+scratch folder containing the accidental outputs. Preserve that folder too:
+
+```bash
+%%bash
+set -euo pipefail
+cd /kaggle/working/hibermem
+[[ -d results/pytest-runs/run-dqyjld4b ]] || {
+  echo "Old scratch folder is absent; recover it from the original session if possible"
+  exit 2
+}
+EVIDENCE="$(mktemp /kaggle/working/hibermem-test-failure-3f2c74f-XXXXXX.tar.gz)"
+tar -czf "${EVIDENCE}" results/phase2r_v2 results/pytest-runs/run-dqyjld4b
+echo "Download: ${EVIDENCE}"
+```
+
+If the old session has already been lost, record that its raw accidental outputs
+are unavailable. Do not invent metrics or regenerate them as if they were the
+original evidence. A fresh screen is still allowed on these development banks.
+
+### B. Test and publish the repair locally (PowerShell)
+
+```powershell
+cd D:\Coding\paper\hibermem
+.\.conda\python.exe scripts\run_tests.py
+git diff --check
+git add tests/conftest.py tests/test_phase2r_v2.py tests/test_unit_test_isolation.py tests/test_launcher_recovery.py
+git add kaggle/run_phase2r_v2.sh docs/PHASE2R_V2_IMPLEMENTATION_AND_KAGGLE.md HANDOFF.md CHANGELOG.md
+git commit -m "Isolate unit tests from Git state and real model loading"
+git push origin HEAD
+git rev-parse HEAD
+```
+
+### C. Update and rerun on Kaggle with the NEW commit
+
+Use the same session to retain the working environment and downloaded weights.
+Python cell:
+
+```python
+import os
+os.environ["HIBERMEM_REF"] = "PASTE_NEW_FULL_40_CHARACTER_COMMIT_HASH"
+os.environ["HIBERMEM_CANDIDATE"] = "qwen"
+os.environ["HIBERMEM_MIN_FREE_STORAGE_GIB"] = "15"
+```
+
+Then:
+
+```bash
+%%bash
+set -euo pipefail
+[[ "${HIBERMEM_REF}" =~ ^[0-9a-f]{40}$ ]] || { echo "Set the new commit first"; exit 2; }
+cd /kaggle/working/hibermem
+[[ -z "$(git status --porcelain)" ]] || { echo "Preserve checkout edits before updating"; exit 2; }
+[[ ! -e results/phase2r_v2/qwen && ! -e results/phase2r_v2/qwen-controls ]] || {
+  echo "A planned screen/control directory already exists; preserve it and use a fresh session"
+  exit 2
+}
+git fetch --depth 1 origin "${HIBERMEM_REF}"
+git checkout --detach FETCH_HEAD
+bash kaggle/run_phase2r_v2.sh
+```
+
+This same-session recovery is specific to the reported test-stage failure: the
+accidental inference lives under pytest scratch, not the planned screen path.
+Never promote or copy its evaluation cache into `results/phase2r_v2/qwen`.
+The Hugging Face weight cache may be reused. Expected order is 95 unit tests,
+symbolic controls, then ten-bank Qwen evaluation and artifact validation. A
+nonzero notebook exception is expected for either a validated negative screen
+(exit 1) or infrastructure failure (exit 2); consult launcher status to distinguish
+them. Confirmation and test remain locked even if qualification passes.
+
+## Historical recovery from the 5813a28 setup failure
 
 The reported Kaggle attempt failed inside venv's `ensurepip` bootstrap, before
 installing dependencies or evaluating Qwen. Its raw exit 1 is an infrastructure
