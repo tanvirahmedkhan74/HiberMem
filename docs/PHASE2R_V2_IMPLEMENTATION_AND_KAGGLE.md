@@ -5,6 +5,54 @@
 **Delivery:** safeguards, a fresh development capability screen, symbolic/shortcut
 controls, an artifact validator, public-pilot diagnostics, and a Kaggle launcher.
 
+## Recovery from the 5813a28 setup failure
+
+The reported Kaggle attempt failed inside venv's `ensurepip` bootstrap, before
+installing dependencies or evaluating Qwen. Its raw exit 1 is an infrastructure
+failure, not a negative screen. The commit/push succeeded; the local pytest log
+instead showed 57 passing tests and 23 temporary-directory setup errors, with
+pytest loaded from base Anaconda rather than the verified project environment.
+
+The repaired launcher creates `hibermem-v2-env-nopip` using `--without-pip` and
+installs through the base interpreter's `pip --python <environment-python>`.
+This is the [documented pip workflow for pip-less environments](https://pip.pypa.io/en/stable/topics/python-option/).
+It leaves the partial old environment untouched, retains Kaggle's torch, and
+uses explicit interpreter paths. Setup/test failures now return 2 and record
+their stage in `<candidate>-launcher-status.json`; only a completed, validated
+screen can return 0 or 1. Bootstrap/install logs are included in the archive.
+
+On Windows use `.\.conda\python.exe scripts\run_tests.py`. This helper creates a
+unique empty directory under `results/pytest-runs/` and never accesses or deletes
+the inaccessible shared `AppData/Local/Temp/pytest-of-tanvi` directory. No admin
+privileges or permission changes are needed. The scratch directories remain for
+debugging. Pytest clears its basetemp, so do not manually set it to a directory
+containing files you want to retain.
+
+After testing, commit/push the repair and use its NEW commit hash on Kaggle.
+The existing clone from the failed attempt can be reused without cloning again:
+
+```python
+import os
+os.environ["HIBERMEM_REF"] = "PASTE_NEW_FULL_40_CHARACTER_REPAIR_COMMIT"
+os.environ["HIBERMEM_CANDIDATE"] = "qwen"
+os.environ["HIBERMEM_MIN_FREE_STORAGE_GIB"] = "15"
+```
+
+```bash
+%%bash
+set -euo pipefail
+[[ "${HIBERMEM_REF}" =~ ^[0-9a-f]{40}$ ]] || { echo "Set the repair commit first"; exit 2; }
+cd /kaggle/working/hibermem
+[[ -z "$(git status --porcelain)" ]] || { echo "Preserve checkout changes before updating"; exit 2; }
+git fetch --depth 1 origin "${HIBERMEM_REF}"
+git checkout --detach FETCH_HEAD
+bash kaggle/run_phase2r_v2.sh
+```
+
+This recovery is appropriate for the reported pre-inference failure. Do not mix
+completed model runs from different commits: use fresh run directories/sessions
+if any inference already occurred.
+
 ## 1. Decision and scope
 
 The first SmolLM2 pilot failed stability and task readiness. The subsequently
@@ -107,10 +155,9 @@ Use the existing Conda environment in a fresh terminal:
 
 ```powershell
 cd D:\Coding\paper\hibermem
-conda activate D:\Coding\paper\hibermem\.conda
-python -m pytest -q
-python scripts\run_phase2r_v2.py --candidate mock --run-dir results\phase2r_v2\prepublish-smoke
-python scripts\validate_phase2r_v2_report.py --report results\phase2r_v2\prepublish-smoke\report.json --allow-mock
+.\.conda\python.exe scripts\run_tests.py
+.\.conda\python.exe scripts\run_phase2r_v2.py --candidate mock --run-dir results\phase2r_v2\prepublish-smoke
+.\.conda\python.exe scripts\validate_phase2r_v2_report.py --report results\phase2r_v2\prepublish-smoke\report.json --allow-mock
 git diff --check
 git status --short
 ```
@@ -195,16 +242,16 @@ bash "${WORKDIR}/kaggle/run_phase2r_v2.sh"
 The launcher:
 
 1. verifies project identity, exact commit, and clean checkout;
-2. creates an isolated Python environment inheriting Kaggle's CUDA torch;
-3. installs the pinned model runtime and project test dependencies;
+2. creates a pip-less Python environment inheriting Kaggle's CUDA torch, bypassing ensurepip;
+3. installs the pinned model runtime and test dependencies using base pip's --python target;
 4. checks that torch was not replaced, checks GPU/storage, and saves package/runtime records;
-5. runs unit tests and symbolic/shortcut controls;
+5. runs unit tests with fresh workspace-owned scratch directories, then symbolic/shortcut controls;
 6. runs the selected model and verifies the completed artifact, including a negative result;
 7. bundles results on exit, including failures. It never deletes model caches.
 
 Exit codes: **0** = development qualification passed; **1** = completed negative
-screen; **2** = runner/identity/evidence error. Other dependency/test failures can
-have their own nonzero code. A notebook CalledProcessError after exit 1 is an
+screen; **2** = setup/dependency/test/runner/identity/evidence error. The original
+process status is preserved in the launcher-status JSON. A notebook CalledProcessError after exit 1 is an
 expected negative scientific-development result, not a reason to relax thresholds.
 
 Download the archive from Kaggle's Output/files pane:

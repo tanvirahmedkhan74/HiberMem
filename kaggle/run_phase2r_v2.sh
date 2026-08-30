@@ -25,42 +25,62 @@ PY
 
 RUN_DIR="results/phase2r_v2/${HIBERMEM_CANDIDATE}"
 ARTIFACT="/kaggle/working/hibermem-v2-${HIBERMEM_CANDIDATE}-${HIBERMEM_REF:0:12}-artifacts.tar.gz"
+BASE_PYTHON="$(python -c 'import sys; print(sys.executable)')"
+STAGE="environment_setup"
+RESULT_VALIDATED=0
 mkdir -p results/phase2r_v2
 finish() {
-  local status="$1"
+  local raw_status="$1"
+  trap - EXIT
   set +e
+  "${BASE_PYTHON}" scripts/kaggle_launch_status.py --stage "${STAGE}" \
+    --raw-exit "${raw_status}" --validated "${RESULT_VALIDATED}" \
+    --candidate "${HIBERMEM_CANDIDATE}" --commit "${HIBERMEM_REF}" \
+    --output "results/phase2r_v2/${HIBERMEM_CANDIDATE}-launcher-status.json"
+  local status="$?"
   if ! tar -czf "${ARTIFACT}" results/phase2r_v2; then
     echo "Artifact packaging failed; preserve the results folder manually" >&2
     exit 2
   fi
   echo "Download: ${ARTIFACT}"
-  echo "Exit ${status}: 0=screen qualified; 1=negative screen; 2=runner/setup error. Other codes may be dependency/test failures."
+  echo "Exit ${status}: 0=validated qualification; 1=validated negative screen; 2=infrastructure error."
   echo "This is development evidence only. Confirmation and test remain locked."
   exit "${status}"
 }
 trap 'finish "$?"' EXIT
 
 # Inherit Kaggle's CUDA torch. Isolate project package changes from notebook apps.
-BASE_TORCH="$(python -c 'import torch; print(torch.__version__)')"
-ENV_DIR="/kaggle/working/hibermem-v2-env"
-if [[ ! -d "${ENV_DIR}" ]]; then
-  python -m venv --system-site-packages "${ENV_DIR}"
+BASE_TORCH="$("${BASE_PYTHON}" -c 'import torch; print(torch.__version__)')"
+# Do not reuse or delete the old, possibly partial ensurepip-based environment.
+ENV_DIR="/kaggle/working/hibermem-v2-env-nopip"
+ENV_PYTHON="${ENV_DIR}/bin/python"
+if [[ ! -e "${ENV_DIR}" ]]; then
+  "${BASE_PYTHON}" -m venv --without-pip --system-site-packages "${ENV_DIR}" \
+    2>&1 | tee "results/phase2r_v2/${HIBERMEM_CANDIDATE}-bootstrap.log"
 fi
-[[ -f "${ENV_DIR}/bin/activate" ]] || { echo "Invalid environment path" >&2; exit 2; }
-source "${ENV_DIR}/bin/activate"
+[[ -x "${ENV_PYTHON}" && -f "${ENV_DIR}/pyvenv.cfg" ]] || { echo "Incomplete no-pip environment; preserve it and use a fresh Kaggle session" >&2; exit 2; }
+"${ENV_PYTHON}" -c 'import pathlib, sys; assert pathlib.Path(sys.prefix) == pathlib.Path(sys.argv[1]), "Wrong environment prefix"' "${ENV_DIR}"
 export HF_HOME="/kaggle/working/hf-cache-hibermem-v2-${HIBERMEM_CANDIDATE}"
 export HIBERMEM_MIN_FREE_STORAGE_GIB="${HIBERMEM_MIN_FREE_STORAGE_GIB:-15}"
 export PYTORCH_CUDA_ALLOC_CONF="expandable_segments:True"
 
-python -m pip install -r configs/requirements/kaggle-phase2r-v2.txt -e '.[dev,reference]'
-[[ "$(python -c 'import torch; print(torch.__version__)')" == "${BASE_TORCH}" ]] || { echo "PyTorch changed unexpectedly; stop and review" >&2; exit 2; }
-python -m pip freeze > "results/phase2r_v2/${HIBERMEM_CANDIDATE}-packages.txt"
-python scripts/verify_kaggle_environment.py --output "results/phase2r_v2/${HIBERMEM_CANDIDATE}-environment.json"
-python -m pytest -q
-python scripts/run_phase2r_v2.py --candidate "${HIBERMEM_CANDIDATE}" \
+STAGE="dependency_install"
+# pip --python can manage an environment which has no pip/ensurepip of its own.
+"${BASE_PYTHON}" -m pip --python "${ENV_PYTHON}" install \
+  -r configs/requirements/kaggle-phase2r-v2.txt -e '.[dev,reference]' \
+  2>&1 | tee "results/phase2r_v2/${HIBERMEM_CANDIDATE}-install.log"
+STAGE="environment_check"
+[[ "$("${ENV_PYTHON}" -c 'import torch; print(torch.__version__)')" == "${BASE_TORCH}" ]] || { echo "PyTorch changed unexpectedly; stop and review" >&2; exit 2; }
+"${BASE_PYTHON}" -m pip --python "${ENV_PYTHON}" freeze > "results/phase2r_v2/${HIBERMEM_CANDIDATE}-packages.txt"
+"${ENV_PYTHON}" scripts/verify_kaggle_environment.py --output "results/phase2r_v2/${HIBERMEM_CANDIDATE}-environment.json"
+STAGE="tests"
+"${ENV_PYTHON}" scripts/run_tests.py
+STAGE="controls"
+"${ENV_PYTHON}" scripts/run_phase2r_v2.py --candidate "${HIBERMEM_CANDIDATE}" \
   --controls-only --run-dir "results/phase2r_v2/${HIBERMEM_CANDIDATE}-controls"
 set +e
-python -u scripts/run_phase2r_v2.py --candidate "${HIBERMEM_CANDIDATE}" \
+STAGE="screen"
+"${ENV_PYTHON}" -u scripts/run_phase2r_v2.py --candidate "${HIBERMEM_CANDIDATE}" \
   --run-dir "${RUN_DIR}" 2>&1 | tee "results/phase2r_v2/${HIBERMEM_CANDIDATE}.log"
 SCREEN_EXIT="${PIPESTATUS[0]}"
 set -e
@@ -68,8 +88,11 @@ if [[ "${SCREEN_EXIT}" != 0 && "${SCREEN_EXIT}" != 1 ]]; then
   exit "${SCREEN_EXIT}"
 fi
 set +e
-python scripts/validate_phase2r_v2_report.py --report "${RUN_DIR}/report.json"
+STAGE="artifact_validation"
+"${ENV_PYTHON}" scripts/validate_phase2r_v2_report.py --report "${RUN_DIR}/report.json"
 VALIDATION_EXIT="$?"
 set -e
 [[ "${VALIDATION_EXIT}" == "${SCREEN_EXIT}" ]] || { echo "Artifact validation disagrees with the run" >&2; exit 2; }
+RESULT_VALIDATED=1
+STAGE="complete"
 exit "${SCREEN_EXIT}"

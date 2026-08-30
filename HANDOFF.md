@@ -8,6 +8,23 @@
 
 ## Current next action — Phase 2-R v2
 
+### Setup recovery after commit 5813a28
+
+The user successfully published `5813a282e05b2c34aa37dc515bf532876e4ca245`.
+The first Kaggle attempt failed during ensurepip, before Qwen evaluation; its
+exit 1 was not a negative model result. Separately, local base-Anaconda pytest
+encountered 23 shared-temp permission errors (57 tests passed).
+
+The repair uses a pip-less Kaggle venv and base pip's explicit --python target,
+preserving the partial old environment. Stage-aware exit reporting reserves 1
+for validated negative screens; setup/test failures become 2. Use
+`.\.conda\python.exe scripts\run_tests.py` locally for a fresh workspace-owned
+temp directory. Publish this repair and use its new commit hash to update the
+existing Kaggle clone; the execution guide includes exact recovery cells.
+Repair verification: 89 tests passed using workspace-local test scratch;
+pip-less environment targeting and Bash syntax checked locally. Kaggle rerun
+is pending and no model conclusion follows from the setup failure.
+
 Use `docs/PHASE2R_V2_IMPLEMENTATION_AND_KAGGLE.md`. The dedicated remote is now
 `git@github.com:tanvirahmedkhan74/HiberMem.git`. Source must be reviewed, committed,
 and pushed by the user before real-model inference. No push was performed here.

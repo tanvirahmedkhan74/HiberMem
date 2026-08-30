@@ -5,6 +5,22 @@ gate status is stated separately from engineering smoke-test status.
 
 ## 2026-08-30
 
+### Kaggle bootstrap and Windows test recovery
+
+- Diagnosed the reported 5813a28 attempt as an ensurepip setup failure, not
+  Qwen qualification evidence. Git publication succeeded independently.
+- Bypass ensurepip using a new --without-pip environment, managed by base pip's
+  --python target; retain Kaggle's CUDA torch and leave the partial old env intact.
+- Record stage-aware launcher status, normalize infrastructure failures to exit
+  2, and reserve exit 1 for completed, independently validated negative screens.
+- Add explicit-interpreter test wrapper with unique workspace-owned temporary
+  directories, avoiding the inaccessible Windows shared pytest temp directory.
+- Add regression coverage for bootstrap commands, exit classification, and
+  safe test scratch paths. No thresholds or scientific results changed.
+- Verified 89 tests in the project Conda environment, Bash syntax, and local
+  pip --python operation against a newly created pip-less environment. The
+  repaired launcher has not yet been executed on Kaggle.
+
 ### Validity audit repairs and Phase 2-R v2 development screen
 
 - Preserved negative scientific/development outcomes; did not unlock any test.
