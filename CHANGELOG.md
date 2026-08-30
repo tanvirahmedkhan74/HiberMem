@@ -3,6 +3,33 @@
 All notable research and implementation changes are recorded here. Scientific
 gate status is stated separately from engineering smoke-test status.
 
+## 2026-08-30
+
+### Validity audit repairs and Phase 2-R v2 development screen
+
+- Preserved negative scientific/development outcomes; did not unlock any test.
+- Reproduced and fixed cache-hit split authorization bypass; fingerprinted
+  request/scoring content, backend settings, runtime packages, and source.
+- Added scientific-run identity protection, confirmation-bank reservation checks,
+  and public manifests excluding test queries.
+- Replaced zero-sensitive top-k stability with nonzero interval eligibility and
+  balanced repeated-query halves. Numerical floor remains a diagnostic safeguard,
+  not a calibrated practical effect size. Old results were not reclassified.
+- Added fresh randomized routing banks 300–309, full-context and minimal link
+  removals, paired counterfactual worlds, explicit abstention/unsupported-answer
+  metrics, and oracle/copying/option controls. No test queries are generated.
+- Added one-model resumable v2 runner (1,680 unique generations / 2,160 conditions
+  per model), raw-output evidence validator, and fail-closed legacy freeze route.
+- Added public-only exact-versus-surrogate Shapley, fit, sampling-sensitivity,
+  actual-deletion, and bank-bootstrap diagnostics.
+- Added exact-commit Kaggle launcher using the dedicated HiberMem remote,
+  retaining Kaggle's CUDA torch, one-model storage, and exit-time artifact bundles.
+- Updated current handoff and step-by-step execution guide; flagged old v1 docs
+  as historical. Real-model v2 inference, semantic/dependency factorial evaluation,
+  prospective interaction feasibility, confirmation, and Phase 3 remain pending.
+- Local verification: 80 tests passed; Bash syntax valid; full v2 mock screen and
+  symbolic/shortcut controls passed. No real LLM was evaluated in this change.
+
 ## 2026-08-29
 
 ### Phase 2-R Kaggle model screen implemented

@@ -277,8 +277,8 @@ def run_screen(
         raise ValueError("Phase 2-R model screening must not be scientific-gate eligible")
     bank_start = int(config["calibration"]["bank_start"])
     n_banks = int(config["calibration"]["n_banks"])
-    if bank_start < 100:
-        raise ValueError("calibration bank_start must be at least 100")
+    if n_banks < 1 or bank_start < 100 or bank_start + n_banks > 200:
+        raise ValueError("legacy calibration must stay inside banks [100, 200); confirmation is reserved")
     dataset = generate_phase2_dataset(n_banks, bank_start=bank_start)
     git = git_provenance(root)
     source_tree = hashlib.sha256(

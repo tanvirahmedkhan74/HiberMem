@@ -88,7 +88,8 @@ def main() -> int:
         )
         if args.stage == "discovery-validation":
             _latest(run_dir / "report.json")
-            if report["validation"]["ready_for_test_unlock"]:
+            if (report["validation"]["ready_for_test_unlock"]
+                    and report.get("p2a_candidate_gate", {}).get("passed", False)):
                 print(f"Resume with --stage unlock --run-dir {run_dir}")
                 return 0
             print("Test remains locked; do not run the unlock or test stage")

@@ -1,4 +1,5 @@
 import json
+import pytest
 
 from scripts.run_phase2r_screen import run_screen
 
@@ -44,3 +45,9 @@ def test_phase2r_screen_uses_fresh_public_banks_and_never_test_split(tmp_path) -
     assert len(evaluations) == 276
     assert {row["split"] for row in evaluations} == {"discovery", "validation"}
     assert {row["bank_id"] for row in evaluations} == {"bank-100", "bank-101"}
+
+
+def test_legacy_screen_rejects_confirmation_banks_before_loading(tmp_path):
+    with pytest.raises(ValueError, match="confirmation is reserved"):
+        run_screen(root=tmp_path, config={"phase": "2-R", "scientific_gate_eligible": False,
+            "calibration": {"bank_start": 199, "n_banks": 2}}, run_dir=tmp_path / "run")

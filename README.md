@@ -8,6 +8,13 @@ Current status: **Phases 0 and 1 passed; the first scientifically eligible
 Phase 2 discovery/validation pilot failed its unlock prerequisites. The held-out
 test remains locked and Phase 3 is blocked.**
 
+**2026-08-30 update:** the reported Qwen/Phi v1 screens also failed qualification.
+The next runnable experiment is the audited, development-only **Phase 2-R v2**
+counterfactual screen. Follow
+[the current implementation and Kaggle guide](docs/PHASE2R_V2_IMPLEMENTATION_AND_KAGGLE.md).
+It uses the dedicated `tanvirahmedkhan74/HiberMem` repository, not the CV project.
+Legacy confirmation freezing is retired; a capability-screen pass does not unlock test.
+
 The independent pre-implementation review is in
 [`docs/PRE_IMPLEMENTATION_AUDIT.md`](docs/PRE_IMPLEMENTATION_AUDIT.md). It approves
 Phase 0 with explicit amendments and leaves every later phase gated.

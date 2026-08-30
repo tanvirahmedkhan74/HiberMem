@@ -5,7 +5,7 @@ import pytest
 from scripts.freeze_phase2r_confirmation import freeze_config
 
 
-def test_freeze_uses_selected_backend_and_fresh_confirmation_banks(tmp_path) -> None:
+def test_freeze_rejects_unsupported_legacy_selection(tmp_path) -> None:
     revision = "a" * 40
     screen_path = tmp_path / "screen.json"
     screen_path.write_text(
@@ -34,19 +34,11 @@ def test_freeze_uses_selected_backend_and_fresh_confirmation_banks(tmp_path) -> 
     )
     output = tmp_path / "confirmation.json"
 
-    frozen = freeze_config(
-        screen_report_path=screen_path,
-        base_config_path=base_path,
-        output_path=output,
-    )
+    with pytest.raises(RuntimeError, match="legacy v1 confirmation"):
+        freeze_config(screen_report_path=screen_path, base_config_path=base_path, output_path=output)
+    assert not output.exists()
 
-    assert frozen["bank_start"] == 200
-    assert frozen["seed"] == 314159
-    assert frozen["scientific_gate_eligible"] is True
-    assert frozen["require_clean_git"] is True
-    assert frozen["backend"]["model_revision"] == revision
-    assert output.exists()
-
+    output.write_text("preserve me", encoding="utf-8")
     with pytest.raises(FileExistsError):
         freeze_config(
             screen_report_path=screen_path,

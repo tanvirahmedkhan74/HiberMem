@@ -1,10 +1,43 @@
 # HiberMem Handoff
 
-**Updated:** 2026-08-27
+**Updated:** 2026-08-30
 
-**Current scientific state:** P0 and P1 passed; first Phase 2 pilot failed P2-A and validation readiness
+**Current scientific state:** P0/P1 passed; SmolLM2 pilot and reported Qwen/Phi v1 qualification failed; v2 capability screen implemented but no real-model v2 result yet
 
 **Locked state:** P2-B not evaluated; Gate P2 undecided; Phase 3 blocked
+
+## Current next action — Phase 2-R v2
+
+Use `docs/PHASE2R_V2_IMPLEMENTATION_AND_KAGGLE.md`. The dedicated remote is now
+`git@github.com:tanvirahmedkhan74/HiberMem.git`. Source must be reviewed, committed,
+and pushed by the user before real-model inference. No push was performed here.
+
+The 2026-08-30 audit reproduced a zero-game stability pass, cached split bypass,
+and question-blind missing-link copying shortcut. Repairs add authorization
+before cache access, content/runtime cache fingerprints, nonzero balanced
+stability, reserved-bank checks, public-manifest filtering, and v2 paired
+counterfactual development banks 300–309 with no test queries. The screen has
+2,160 condition records / 1,680 unique generations per model.
+
+The v1 model outcomes (Qwen missing-link 0.30; Phi 0.464583; both failed) are in
+`docs/PHASE2R_KAGGLE_SCREENING_RESULTS_2026-08-29.md`. Raw Kaggle artifacts still
+need preservation/independent verification in this checkout. Do not describe
+the v1 screen as pending or the old wrong-repository blocker as current.
+
+Local verification: 80 tests passed; Bash syntax check passed; full 10-bank mock
+v2 screen passed with a qualifying symbolic oracle and failing shortcut controls.
+These are engineering checks, not real-model evidence. The public-pilot analyzer
+wrote `results/audits/20260830-public-pilot-v2.json` without altering the old run.
+
+The old freeze route is retired. A v2 qualification pass leads to exact-coalition
+mechanism-feasibility work, not automatic confirmation. Semantic/dependency
+factorial controls, prospective prediction panels, group-aware uncertainty, and
+a compatible frozen confirmation/test protocol remain to be implemented.
+
+## Historical record below
+
+The following sections preserve the earlier handoff and are superseded where
+they say screening has not run or the GitHub remote is absent.
 
 ## Verified evidence
 

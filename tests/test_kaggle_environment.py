@@ -17,3 +17,10 @@ def test_kaggle_environment_storage_override_must_be_positive(monkeypatch) -> No
 
     with pytest.raises(RuntimeError, match="positive number"):
         configured_min_free_storage_gib()
+
+
+@pytest.mark.parametrize("value", ["nan", "inf", "-inf"])
+def test_kaggle_storage_floor_must_be_finite(monkeypatch, value):
+    monkeypatch.setenv("HIBERMEM_MIN_FREE_STORAGE_GIB", value)
+    with pytest.raises(RuntimeError, match="positive"):
+        configured_min_free_storage_gib()

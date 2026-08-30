@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import importlib.metadata
 import json
+import math
 import os
 import shutil
 import subprocess
@@ -30,7 +31,7 @@ def configured_min_free_storage_gib() -> float:
         raise RuntimeError(
             "HIBERMEM_MIN_FREE_STORAGE_GIB must be a positive number of GiB"
         ) from error
-    if value <= 0:
+    if not math.isfinite(value) or value <= 0:
         raise RuntimeError(
             "HIBERMEM_MIN_FREE_STORAGE_GIB must be a positive number of GiB"
         )
@@ -75,7 +76,7 @@ def verify(
         if min_free_storage_gib is None
         else min_free_storage_gib
     )
-    if required_free_storage_gib <= 0:
+    if not math.isfinite(required_free_storage_gib) or required_free_storage_gib <= 0:
         raise ValueError("min_free_storage_gib must be positive")
     free_bytes = shutil.disk_usage(root).free
     if free_bytes < required_free_storage_gib * 1024**3:

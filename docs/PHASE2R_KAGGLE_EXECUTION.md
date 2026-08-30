@@ -1,5 +1,10 @@
 # Phase 2-R Kaggle Model Screening and Confirmation
 
+> Historical v1 workflow, superseded on 2026-08-30. Both reported candidates
+> failed qualification. Do not execute the old confirmation sequence below.
+> Use [the v2 implementation and Kaggle guide](PHASE2R_V2_IMPLEMENTATION_AND_KAGGLE.md).
+> The dedicated HiberMem GitHub remote is now configured.
+
 **Status:** implemented locally; requires publication to the correct GitHub repository
 
 ## 1. Repository audit

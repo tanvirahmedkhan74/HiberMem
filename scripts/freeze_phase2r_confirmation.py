@@ -1,9 +1,12 @@
-"""Freeze a fresh-bank Phase 2 confirmation config from a qualified screen."""
+"""Fail closed on retired v1 or v2 capability-only confirmation requests.
+
+The audit retired the v1 freeze route. A v2 screen is not interaction feasibility
+evidence and is deliberately not compatible with the legacy Phase 2 generator.
+"""
 
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 from pathlib import Path
 
@@ -13,47 +16,29 @@ DEFAULT_BASE = ROOT / "configs" / "experiments" / "phase2_local_4050.json"
 DEFAULT_OUTPUT = ROOT / "configs" / "experiments" / "phase2r_kaggle_confirmation.json"
 
 
-def _sha256(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
-
-
 def freeze_config(
     *, screen_report_path: Path, base_config_path: Path, output_path: Path
 ) -> dict[str, object]:
     if output_path.exists():
         raise FileExistsError(f"refusing to overwrite frozen config: {output_path}")
     screen = json.loads(screen_report_path.read_text(encoding="utf-8"))
+    if screen.get("schema_version") == 2:
+        from hibermem.evaluation.artifacts import validate_report
+
+        evidence = validate_report(screen_report_path)
+        if not evidence["qualified"]:
+            raise RuntimeError("v2 development qualification failed")
+        raise RuntimeError(
+            "v2 capability screening is not interaction-feasibility evidence; "
+            "freeze remains disabled until a reviewed compatible confirmation protocol exists"
+        )
     selected = screen.get("selected_candidate")
     if not isinstance(selected, dict):
         raise RuntimeError("the Phase 2-R screen did not select a qualified candidate")
-    backend = selected.get("backend")
-    if not isinstance(backend, dict) or backend.get("type") != "hf_local":
-        raise RuntimeError("the selected screen candidate is not a pinned HF backend")
-    revision = str(backend.get("model_revision", ""))
-    if len(revision) != 40 or any(character not in "0123456789abcdef" for character in revision):
-        raise RuntimeError("the selected model revision must be a 40-character commit hash")
-
-    config = json.loads(base_config_path.read_text(encoding="utf-8"))
-    config.update(
-        {
-            "profile": "phase2r-kaggle-confirmation-fresh-banks-v1",
-            "scientific_gate_eligible": True,
-            "require_clean_git": True,
-            "seed": 314159,
-            "bank_start": 200,
-            "backend": backend,
-            "development_screen_report_sha256": _sha256(screen_report_path),
-            "development_selection": {
-                "model_label": selected.get("model_label"),
-                "selection_rule": selected.get("selection_rule"),
-            },
-        }
+    raise RuntimeError(
+        "legacy v1 confirmation freezing is retired after the validity audit; "
+        "a selected_candidate field alone is not qualification evidence"
     )
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    output_path.write_text(
-        json.dumps(config, indent=2, sort_keys=True) + "\n", encoding="utf-8"
-    )
-    return config
 
 
 def main() -> int:

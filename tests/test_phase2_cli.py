@@ -50,3 +50,15 @@ def test_phase1_tracked_certificate_supports_clean_remote_clone(
     monkeypatch.setattr(run_phase2, "PHASE1_CERTIFICATE", certificate)
 
     run_phase2._require_phase1()
+
+
+def test_readiness_alone_cannot_suggest_unlock(tmp_path, monkeypatch, capsys):
+    config = tmp_path / "config.json"
+    config.write_text("{}")
+    monkeypatch.setattr(run_phase2, "_require_phase1", lambda: None)
+    monkeypatch.setattr(run_phase2, "_latest", lambda _: None)
+    monkeypatch.setattr(run_phase2, "create_phase2_run", lambda **_: {
+        "validation": {"ready_for_test_unlock": True}, "p2a_candidate_gate": {"passed": False}})
+    monkeypatch.setattr(sys, "argv", ["run_phase2.py", "--config", str(config), "--run-dir", str(tmp_path / "run")])
+    assert run_phase2.main() == 1
+    assert "Resume with --stage unlock" not in capsys.readouterr().out

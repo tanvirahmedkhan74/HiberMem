@@ -56,16 +56,27 @@ class EvaluationView:
             raise ValueError("the answer capability must exactly match its query identifiers")
         self.split = split
         self.queries = queries
+        self._queries_by_id = MappingProxyType({query.query_id: query for query in queries})
         self._answers = MappingProxyType(dict(answers))
 
     def for_bank(self, bank_id: str) -> tuple[Query, ...]:
         return tuple(query for query in self.queries if query.bank_id == bank_id)
 
-    def score(self, query: Query, parsed_action: str | None) -> float:
-        if query.split is not self.split or query.query_id not in self._answers:
+    def authorize(self, query: Query) -> None:
+        """Validate the complete query before evaluation, including cache hits."""
+        if query.split is not self.split or self._queries_by_id.get(query.query_id) != query:
             raise PermissionError(
                 f"{self.split.value} view cannot score query {query.query_id!r}"
             )
+
+    def scoring_fingerprint(self, query: Query) -> str:
+        self.authorize(query)
+        return hashlib.sha256(
+            json.dumps([query.query_id, self.split.value, self._answers[query.query_id]]).encode()
+        ).hexdigest()
+
+    def score(self, query: Query, parsed_action: str | None) -> float:
+        self.authorize(query)
         return float(parsed_action == self._answers[query.query_id])
 
 
@@ -100,7 +111,7 @@ class ControlledDataset:
     def bank(self, bank_id: str) -> MemoryBank:
         return next(bank for bank in self.banks if bank.bank_id == bank_id)
 
-    def public_manifest(self) -> dict[str, object]:
+    def public_manifest(self, *, include_test: bool = False) -> dict[str, object]:
         return {
             "schema_version": 1,
             "dataset_version": self.version,
@@ -131,12 +142,13 @@ class ControlledDataset:
                     "options": list(query.options),
                 }
                 for query in self.queries
+                if include_test or query.split is not QuerySplit.TEST
             ],
         }
 
     def sha256(self) -> str:
         encoded = json.dumps(
-            self.public_manifest(), sort_keys=True, separators=(",", ":")
+            self.public_manifest(include_test=True), sort_keys=True, separators=(",", ":")
         ).encode("utf-8")
         return hashlib.sha256(encoded).hexdigest()
 

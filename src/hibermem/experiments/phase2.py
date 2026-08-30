@@ -170,7 +170,8 @@ def runtime_provenance(root: Path, backend: LLMBackend) -> dict[str, object]:
         "platform": platform.platform(),
         "packages": {
             name: _package_version(name)
-            for name in ("hibermem", "numpy", "scipy", "torch", "transformers")
+            for name in ("hibermem", "numpy", "scipy", "torch", "transformers",
+                         "accelerate", "huggingface-hub", "tokenizers", "safetensors", "sentencepiece")
         },
         "git": git_provenance(root),
         "source_tree_sha256": _source_tree_sha256(root),
@@ -217,6 +218,13 @@ class CoalitionEvaluator:
         self.progress = progress
         self.cache_hits = 0
         self.cache_misses = 0
+        self.runtime_sha256 = _json_hash({
+            "backend": backend.provenance(),
+            "source_tree": _source_tree_sha256(Path(__file__).resolve().parents[3]),
+            "packages": {name: _package_version(name) for name in (
+                "torch", "transformers", "tokenizers", "accelerate", "huggingface-hub"
+            )},
+        })
 
     def evaluate(
         self,
@@ -225,10 +233,15 @@ class CoalitionEvaluator:
         view: EvaluationView,
         mask: Mask,
     ) -> CachedEvaluation:
+        view.authorize(query)
         if len(mask) != len(bank.memories):
             raise ValueError("coalition mask width does not match the memory bank")
         if query.bank_id != bank.bank_id:
             raise ValueError("query and memory bank do not match")
+        memories = tuple(
+            memory for memory, present in zip(bank.memories, mask, strict=True) if present
+        )
+        messages = build_messages(memories, query)
         key = CacheKey(
             model_id=self.backend.model_id,
             model_revision=self.backend.model_revision,
@@ -239,16 +252,15 @@ class CoalitionEvaluator:
             generation_config=self.generation_config,
             seed=self.seed,
             code_commit=self.code_commit,
+            request_sha256=_json_hash(messages),
+            runtime_sha256=self.runtime_sha256,
+            scoring_sha256=view.scoring_fingerprint(query),
         )
         cached = self.cache.get(key)
         if cached is not None:
             self.cache_hits += 1
             return cached
 
-        memories = tuple(
-            memory for memory, present in zip(bank.memories, mask, strict=True) if present
-        )
-        messages = build_messages(memories, query)
         start = time.perf_counter()
         generated = self.backend.generate(
             messages,
@@ -355,8 +367,11 @@ def fit_discovery_bank(
     bootstrap_resamples: int,
     bootstrap_seed: int,
     top_k: int,
+    practical_effect_min: float = 1e-8,
 ) -> dict[str, object]:
     require_discovery_view(view)
+    if practical_effect_min <= 0 or not 1 <= top_k <= math.comb(len(bank.memories), 2):
+        raise ValueError("positive effect floor and valid top_k are required")
     queries = view.for_bank(bank.bank_id)
     rewards = evaluator.reward_matrix(bank, queries, view, masks)
     values = np.mean(rewards, axis=1)
@@ -371,18 +386,38 @@ def fit_discovery_bank(
         seed=bootstrap_seed,
     )
 
-    first_half = np.arange(rewards.shape[1]) % 2 == 0
-    second_half = ~first_half
+    # Compare repeated questions of the same kind/dependency in both halves.
+    # Singleton families cannot be balanced and are excluded from this diagnostic.
+    groups: dict[tuple[str, str], list[int]] = defaultdict(list)
+    for index, query in enumerate(queries):
+        kind = "direct" if "direct" in query.template_family else "two_hop"
+        groups[(query.dependency_group, kind)].append(index)
+    half_indices: list[list[int]] = [[], []]
+    rng = np.random.default_rng(bootstrap_seed)
+    for indices in groups.values():
+        shuffled = rng.permutation(indices)
+        size = len(shuffled) // 2
+        half_indices[0].extend(shuffled[:size])
+        half_indices[1].extend(shuffled[size:2 * size])
+    if not half_indices[0] or not half_indices[1]:
+        raise ValueError("stability needs repeated queries per dependency and kind")
     halves = []
-    for selected in (first_half, second_half):
+    for selected in half_indices:
         half_estimator = PolynomialInteractionEstimator(
             max_order=2, n_players=len(bank.memories)
         ).fit(masks, np.mean(rewards[:, selected], axis=1))
-        halves.append(set(_ranked_pairs(half_estimator)[:top_k]))
+        halves.append(set(
+            [term for term in _ranked_pairs(half_estimator)
+             if abs(half_estimator.coefficients[term]) >= practical_effect_min][:top_k]
+        ))
     overlap = len(halves[0] & halves[1]) / top_k
     ranked = _ranked_pairs(estimator)
-    top_terms = ranked[:top_k]
-    top_sign_consistency = fmean(bootstrap[term]["sign_consistency"] for term in top_terms)
+    eligible = [term for term in ranked
+                if abs(estimator.coefficients[term]) >= practical_effect_min
+                and bootstrap[term]["lower"] * bootstrap[term]["upper"] > 0]
+    top_terms = eligible[:top_k]
+    top_sign_consistency = (fmean(bootstrap[term]["sign_consistency"] for term in top_terms)
+                            if top_terms else 0.0)
     n_pairs = math.comb(len(bank.memories), 2)
 
     return {
@@ -396,6 +431,12 @@ def fit_discovery_bank(
         "coefficients": _coefficient_rows(estimator, bootstrap),
         "top_pairs": [list(term) for term in top_terms],
         "stability": {
+            "protocol": "nonzero-balanced-v2",
+            "practical_effect_min": practical_effect_min,
+            "eligible_pair_count": len(eligible),
+            "required_pair_count": top_k,
+            "split_half_query_counts": [len(indices) for indices in half_indices],
+            "split_half_excluded_queries": len(queries) - sum(map(len, half_indices)),
             "split_half_top_k_overlap": overlap,
             "random_ranking_expected_overlap": top_k / n_pairs,
             "top_pair_mean_sign_consistency": top_sign_consistency,
@@ -535,6 +576,15 @@ def _p2a_gate(bank_results: Sequence[Mapping[str, object]], config: Mapping[str,
     )
     mean_sign = fmean(sign_consistency)
     checks = {
+        "nonzero_pair_bank_fraction": {
+            "value": fmean(int(item.get("eligible_pair_count", 0)) >=
+                           int(item.get("required_pair_count", 4)) for item in stability),
+            "operator": ">=",
+            "threshold": float(config.get("nonzero_pair_bank_fraction_min", 0.8)),
+            "passed": fmean(int(item.get("eligible_pair_count", 0)) >=
+                            int(item.get("required_pair_count", 4)) for item in stability)
+                      >= float(config.get("nonzero_pair_bank_fraction_min", 0.8)),
+        },
         "mean_split_half_top_k_overlap": {
             "value": mean_overlap,
             "operator": ">=",
@@ -599,6 +649,13 @@ def create_phase2_run(
     if bool(config["scientific_gate_eligible"]) and (run_dir / "test_unlock.json").exists():
         raise RuntimeError("discovery artifacts are frozen after the scientific test unlock")
     _validate_config(config, root)
+    prior_path = run_dir / "report.json"
+    if bool(config["scientific_gate_eligible"]) and prior_path.exists():
+        prior = json.loads(prior_path.read_text(encoding="utf-8"))
+        if (prior.get("config_sha256") != _json_hash(config)
+                or prior.get("provenance", {}).get("source_tree_sha256") != _source_tree_sha256(root)
+                or prior.get("provenance", {}).get("git", {}).get("commit") != git_provenance(root)["commit"]):
+            raise RuntimeError("scientific run identity changed; preserve the old run and use a new directory")
     backend = backend or make_backend(config["backend"])
     _validate_config(config, root, backend)
     dataset = generate_phase2_dataset(
@@ -606,7 +663,7 @@ def create_phase2_run(
     )
     expected_counts = config["query_counts_per_bank"]
     for split in QuerySplit:
-        observed = len(dataset.view(split).queries) // len(dataset.banks)
+        observed = sum(query.split is split for query in dataset.queries) // len(dataset.banks)
         if observed != int(expected_counts[split.value]):
             raise RuntimeError(
                 f"dataset has {observed} {split.value} queries per bank; config expects "

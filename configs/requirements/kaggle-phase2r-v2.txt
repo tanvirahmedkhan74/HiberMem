@@ -1,0 +1,8 @@
+# Keep the same model runtime as v1; pin direct analysis/test dependencies too.
+# CUDA torch remains supplied by Kaggle, never installed from this file.
+-r kaggle-phase2r.txt
+numpy==2.4.6
+scipy==1.17.1
+shapiq==1.4.1
+pytest==9.1.1
+packaging==26.3

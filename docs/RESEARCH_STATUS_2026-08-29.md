@@ -1,5 +1,9 @@
 # HiberMem Research Status and Remaining Work
 
+> Historical snapshot. The screen subsequently completed with neither model
+> qualified. See [the 2026-08-30 v2 implementation/status](PHASE2R_V2_IMPLEMENTATION_AND_KAGGLE.md)
+> for the validity repairs and current execution sequence.
+
 **Review date:** 2026-08-29
 
 **Lead decision:** continue only with Phase 2-R model/task qualification; do not

@@ -22,6 +22,10 @@ class CacheKey:
     generation_config: Mapping[str, object]
     seed: int
     code_commit: str | None
+    request_sha256: str = "legacy-unspecified"
+    runtime_sha256: str = "legacy-unspecified"
+    scoring_sha256: str = "legacy-unspecified"
+    schema_version: int = 2
 
     def canonical_json(self) -> str:
         return json.dumps(asdict(self), sort_keys=True, separators=(",", ":"))

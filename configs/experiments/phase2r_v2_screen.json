@@ -1,0 +1,38 @@
+{
+  "schema_version": 2,
+  "protocol": "phase2r-counterfactual-routing-v2",
+  "scientific_gate_eligible": false,
+  "seed": 20260830,
+  "calibration": {"n_banks": 10, "bank_start": 300, "seed": 20260830},
+  "generation": {"do_sample": false, "max_new_tokens": 16},
+  "qualification_thresholds": {
+    "full_direct_accuracy_min": 0.9,
+    "full_two_hop_accuracy_min": 0.8,
+    "memory_gap_min": 0.5,
+    "direct_minimal_accuracy_min": 0.9,
+    "pair_only_accuracy_min": 0.8,
+    "full_strict_format_rate_min": 0.98,
+    "passing_bank_fraction_min": 0.8,
+    "accidental_correct_rate_max": 0.25,
+    "abstention_rate_min": 0.9,
+    "counterfactual_full_pair_accuracy_min": 0.8,
+    "counterfactual_missing_pair_abstention_min": 0.9,
+    "counterfactual_identical_output_rate_min": 1.0
+  },
+  "candidates": {
+    "qwen": {
+      "type": "hf_local",
+      "model_id": "Qwen/Qwen3-4B-Instruct-2507",
+      "model_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+      "device": "cuda", "dtype": "float16", "quantization": "none",
+      "local_files_only": false, "trust_remote_code": false
+    },
+    "phi": {
+      "type": "hf_local",
+      "model_id": "microsoft/Phi-4-mini-instruct",
+      "model_revision": "cfbefacb99257ffa30c83adab238a50856ac3083",
+      "device": "cuda", "dtype": "float16", "quantization": "none",
+      "local_files_only": false, "trust_remote_code": false
+    }
+  }
+}
