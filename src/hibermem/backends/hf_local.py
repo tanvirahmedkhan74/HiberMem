@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import hashlib
+import json
 from typing import Any
 
 from .base import GenerationResult, LLMBackend, Message
@@ -101,11 +103,21 @@ class HFLocalBackend(LLMBackend):
                 pad_token_id=self._tokenizer.eos_token_id,
             )
         new_tokens = generated[0, input_length:]
-        text = self._tokenizer.decode(new_tokens, skip_special_tokens=True).strip()
+        decoded = self._tokenizer.decode(new_tokens, skip_special_tokens=True)
+        text = decoded.strip()
         return GenerationResult(
             text=text,
             input_tokens=input_length,
             output_tokens=int(new_tokens.shape[-1]),
+            trace={
+                "rendered_prompt": rendered,
+                "rendered_prompt_sha256": hashlib.sha256(rendered.encode("utf-8")).hexdigest(),
+                "input_token_ids": inputs["input_ids"][0].tolist(),
+                "generated_token_ids": new_tokens.tolist(),
+                "decoded_with_special_tokens": self._tokenizer.decode(new_tokens, skip_special_tokens=False),
+                "decoded_without_special_tokens": decoded,
+                "text_transform": "decode_skip_special_tokens_then_strip",
+            },
         )
 
     def provenance(self) -> dict[str, str]:
@@ -115,6 +127,13 @@ class HFLocalBackend(LLMBackend):
                 "device": self.device,
                 "dtype": self.dtype,
                 "trust_remote_code": str(self.trust_remote_code).lower(),
+                "tokenizer_class": type(self._tokenizer).__name__,
+                "model_class": type(self._model).__name__,
+                "chat_template_sha256": hashlib.sha256(json.dumps(
+                    self._tokenizer.chat_template, sort_keys=True
+                ).encode("utf-8")).hexdigest(),
+                "resolved_parameter_dtypes": ",".join(sorted({str(p.dtype) for p in self._model.parameters()})),
+                "resolved_parameter_devices": ",".join(sorted({str(p.device) for p in self._model.parameters()})),
             }
         )
         return provenance

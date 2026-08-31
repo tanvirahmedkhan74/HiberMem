@@ -120,12 +120,20 @@ class ExactInteractionEstimator(InteractionEstimator):
         return self
 
     def individual_values(self) -> dict[int, float]:
+        """Legacy alias for exact ordinary Shapley values."""
+        return self.shapley_item_values()
+
+    def shapley_item_values(self) -> dict[int, float]:
         return {
             player: shapley_interaction_index(self.game, (player,))
             for player in range(self.game.n_players)
         }
 
     def interactions(self, order: int) -> InteractionMap:
+        """Legacy alias for sii_values."""
+        return self.sii_values(order)
+
+    def sii_values(self, order: int) -> InteractionMap:
         if isinstance(order, bool) or not isinstance(order, int):
             raise TypeError("order must be an integer")
         if not 1 <= order <= self.game.n_players:
@@ -134,6 +142,11 @@ class ExactInteractionEstimator(InteractionEstimator):
             coalition: shapley_interaction_index(self.game, coalition)
             for coalition in combinations(range(self.game.n_players), order)
         }
+
+    def mobius_coefficients(self) -> InteractionMap:
+        from .mobius import mobius_coefficients
+
+        return mobius_coefficients(self.game)
 
     def uncertainty(self) -> InteractionMap:
         return {

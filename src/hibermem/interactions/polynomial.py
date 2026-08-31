@@ -1,4 +1,4 @@
-"""Sampled low-order Möbius recovery by deterministic least squares."""
+"""Low-order surrogate fitting; exact Möbius recovery only under correct specification."""
 
 from __future__ import annotations
 
@@ -16,8 +16,10 @@ from .shapley import InteractionEstimator, InteractionMap
 class PolynomialInteractionEstimator(InteractionEstimator):
     """Fit a truncated pseudo-Boolean polynomial to sampled coalition values.
 
-    Coefficients are interpreted as Möbius/Harsanyi terms in the monomial basis
-    ``prod(x_i for i in term)``. They are deliberately not labeled SII values.
+    Coefficients are Möbius/Harsanyi terms OF THE FITTED SURROGATE in the monomial
+    basis ``prod(x_i for i in term)``. Omitted orders contaminate lower-order terms;
+    even complete coalition enumeration does not make a truncated fit exact.
+    They are deliberately not labeled SII values.
     Ordinary least squares is used so analytical standard errors and recovery of
     known synthetic coefficients remain transparent.
     """
@@ -148,8 +150,12 @@ class PolynomialInteractionEstimator(InteractionEstimator):
         degrees_of_freedom = len(values) - rank
         if degrees_of_freedom > 0:
             residual_variance = float(np.sum((values - fitted) ** 2) / degrees_of_freedom)
-            covariance = residual_variance * np.linalg.pinv(design.T @ design, hermitian=True)
-            standard_errors = np.sqrt(np.maximum(np.diag(covariance), 0.0))
+            # Avoid squaring the condition number by forming X.T @ X. These are
+            # iid homoskedastic model-based SEs, not query/bank-generalization CIs.
+            _, covariance_singular_values, vt = np.linalg.svd(design, full_matrices=False)
+            standard_errors = np.sqrt(
+                residual_variance * np.sum((vt.T / covariance_singular_values) ** 2, axis=1)
+            )
         else:
             standard_errors = np.full(len(terms), np.nan, dtype=float)
 
@@ -173,8 +179,25 @@ class PolynomialInteractionEstimator(InteractionEstimator):
         return tuple(float(value) for value in design @ self._coefficients)
 
     def individual_values(self) -> dict[int, float]:
+        """Legacy alias for singleton_coefficients, NOT ordinary Shapley values."""
+        return self.singleton_coefficients()
+
+    def singleton_coefficients(self) -> dict[int, float]:
+        """First-order monomial coefficients of the fitted surrogate."""
         coefficients = self.coefficients
         return {(term[0]): value for term, value in coefficients.items() if len(term) == 1}
+
+    def mobius_coefficients(self) -> InteractionMap:
+        """Exact Möbius terms of the surrogate, not necessarily the observed game."""
+        return self.coefficients
+
+    def shapley_item_values(self) -> dict[int, float]:
+        """Ordinary Shapley values of this fitted surrogate (all fitted orders)."""
+        values = dict.fromkeys(range(self.n_players), 0.0)
+        for term, coefficient in self.coefficients.items():
+            for player in term:
+                values[player] += coefficient / len(term)
+        return values
 
     def interactions(self, order: int) -> InteractionMap:
         if isinstance(order, bool) or not isinstance(order, int):

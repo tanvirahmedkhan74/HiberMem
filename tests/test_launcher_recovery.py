@@ -40,3 +40,13 @@ def test_kaggle_launcher_bypasses_ensurepip_and_targets_the_environment():
     assert "scripts/run_tests.py" in script
     assert '--junitxml "results/phase2r_v2/${HIBERMEM_CANDIDATE}-tests.xml"' in script
     assert 'tee "results/phase2r_v2/${HIBERMEM_CANDIDATE}-tests.log"' in script
+
+
+def test_exact_launcher_has_no_scientific_success_or_test_path():
+    script = (Path(__file__).resolve().parents[1] / "kaggle/run_exact_mechanism.sh").read_text()
+    assert "-m venv --without-pip --system-site-packages" in script
+    assert '-m pip --python "${ENV_PYTHON}" install' in script
+    assert "scripts/run_tests.py" in script and "scripts/validate_exact_mechanism.py" in script
+    assert '"qualified": None' in script
+    assert "0=validated completed diagnostic" in script
+    assert "freeze_phase2r" not in script and "--stage unlock" not in script

@@ -3,6 +3,35 @@
 All notable research and implementation changes are recorded here. Scientific
 gate status is stated separately from engineering smoke-test status.
 
+## 2026-08-31
+
+### Adversarial audit and exact-coalition development diagnostics
+
+- Archived the mathematical/empirical audit and an E0–E6 experiment roadmap.
+  Hyperbolic retrieval, consolidation, and biological engram claims remain outside
+  the implemented evidence. No historical result or qualification gate changed.
+- Revalidated the local Qwen/Phi v2 bundles. Their local empty-context pair
+  contrasts are 0.933333 and 0.016667 respectively; this is not SII, future-query
+  stability, or prospective retention. Gemma remains pasted-report evidence only.
+- Added explicit exact/surrogate Shapley, Mobius, and singleton APIs while retaining
+  legacy estimator behavior. Replaced normal-matrix standard errors with an SVD
+  calculation and regression-tested higher-order omitted-variable contamination.
+- Implemented E0 read-only reanalysis, E1 complete eight-item games on fresh
+  development banks 320–321 (2,048 conditions), and E2 paired presentation
+  sensitivity (6,144 conditions). Record-order reversal preserves record labels.
+- Added exact SII/Mobius/Shapley diagnostics, order-1/2/3 surrogate fits, and
+  descriptive same-query baseline comparisons, explicitly not future-policy tests.
+- Added stateless HF generation traces, token IDs, rendered prompts, actual
+  dtype/device/template fingerprints, atomic per-condition resume checkpoints,
+  symbolic/shortcut controls, and an independent artifact validator.
+- Added an exact-commit Kaggle launcher using the proven no-ensurepip bootstrap,
+  preserving CUDA torch. Exit 0 means validated diagnostics, never qualification.
+- Verification: 130 tests passed in the project Conda environment; Bash syntax
+  passed; E0 reproduced the audit's bank-bootstrap estimates. Full E1/E2 mock
+  runs (2,048/6,144 conditions) independently validated, with the expected
+  presentation-invariant symbolic games. These are engineering checks. Real E1/E2 Kaggle
+  inference is still pending. E3–E6 and the audited Gemma adapter are not implemented.
+
 ## 2026-08-30
 
 ### Clean-checkout unit-test isolation recovery

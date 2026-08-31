@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "protocol": "phase2r-exact-mechanism-v1",
+  "scientific_gate_eligible": false,
+  "confirmation_compatible": false,
+  "calibration": {"n_banks": 2, "bank_start": 320, "seed": 20260831},
+  "variants": ["original", "reverse_records", "reverse_options"],
+  "generation": {"do_sample": false, "max_new_tokens": 16},
+  "keep_counts": [2, 3, 4, 6],
+  "random_seeds": [0, 1, 2, 3, 4],
+  "candidates": {
+    "qwen": {
+      "type": "hf_local", "model_id": "Qwen/Qwen3-4B-Instruct-2507",
+      "model_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+      "device": "cuda", "dtype": "float16", "quantization": "none",
+      "local_files_only": false, "trust_remote_code": false
+    },
+    "phi": {
+      "type": "hf_local", "model_id": "microsoft/Phi-4-mini-instruct",
+      "model_revision": "cfbefacb99257ffa30c83adab238a50856ac3083",
+      "device": "cuda", "dtype": "float16", "quantization": "none",
+      "local_files_only": false, "trust_remote_code": false
+    }
+  }
+}

@@ -1,11 +1,109 @@
 # Phase 2-R Kaggle Screening Results
 
-**Date:** 2026-08-29  
-**Status:** no model qualified; confirmation is not allowed  
-**Scope:** development-only model and task screening. This was not a Phase 2
-gate test and did not access the held-out test split.
+**Updated:** 2026-08-31
+**Current status:** v2 Qwen and Phi screens completed, validated, and negative;
+no model qualified; confirmation is not allowed.
+**Scope:** development-only model and task screening. No run in this document
+was a Phase 2 gate test or accessed the held-out test split.
 
-## Plain-language summary
+## Current authoritative finding — v2 counterfactual-routing screen
+
+Both pinned candidates completed the same ten-bank v2 protocol at source commit
+`8991ba49e14f064575fed5c4eafd7eee33197cc4`. Each completed report was
+independently revalidated from its raw output table, manifests, configuration,
+runtime metadata, and artifact hashes. Both launcher status files record a
+validated development-negative result (exit 1), rather than a setup or runner
+failure.
+
+The screen comprised 2,160 condition records and 1,680 unique generations per
+candidate. It used only development banks `dev-300` through `dev-309`, discovery
+and validation prompt families, deterministic generation, and no test queries.
+The symbolic oracle passed while the destination-copy and first-option controls
+failed, as required before model inference.
+
+### Outcome comparison
+
+| Metric | Requirement | Qwen3 4B | Phi-4 Mini | Result |
+|---|---:|---:|---:|---|
+| Passing-bank fraction | >= 0.80 | 0.80 | 0.20 | Qwen pass; Phi fail |
+| Mean full direct accuracy | >= 0.90 | 1.000 | 1.000 | Both pass |
+| Mean full two-hop accuracy | >= 0.80 | 0.933 | 0.775 | Qwen pass; Phi fail |
+| Mean full strict-format rate | >= 0.98 | 0.992 | 0.963 | Qwen pass; Phi fail |
+| Mean memory gap | >= 0.50 | 0.967 | 0.825 | Both pass |
+| Pair-only accuracy | >= 0.80 | 1.000 | 1.000 | Both pass |
+| Counterfactual full-pair accuracy | >= 0.80 | 0.783 | 0.558 | Both fail |
+| Counterfactual missing-pair abstention | >= 0.90 | 0.538 | 0.563 | Both fail |
+| Counterfactual identical-output rate | 1.00 | 1.000 | 1.000 | Both pass |
+
+The identical-output result only establishes consistency for byte-identical
+incomplete prompts. It does **not** compensate for the low rate of abstaining.
+
+### Missing-link finding
+
+The main common failure is unsupported destination production when the final
+`route -> destination` record is absent. Qwen abstained in 0/120 minimal
+missing-second cases and 9/120 missing-second-with-context cases. Phi abstained
+in 0/120 and 25/120 respectively. Both are far below the preregistered 0.90
+threshold.
+
+The two models fail differently when the first `request -> route` record is
+absent:
+
+| Condition | Qwen abstention | Phi abstention | Additional Phi issue |
+|---|---:|---:|---|
+| Missing first, minimal | 1.000 | 0.000 | 0.925 accidental-correct rate |
+| Missing first, context | 1.000 | 0.917 | passes directional thresholds |
+| Missing second, minimal | 0.000 | 0.000 | 0.517 parse-null rate |
+| Missing second, context | 0.075 | 0.208 | substantial unsupported assertions |
+
+For Qwen, 105/120 minimal missing-second outputs were the first non-`UNKNOWN`
+destination option, despite no destination record being supplied. With other
+records retained, 105/120 of its outputs occurred in a retained but irrelevant
+record. This is evidence of option-position bias and irrelevant-record copying,
+not verified completion of the requested chain.
+
+For Phi, minimal missing-first cases were more severe: it returned the true
+destination in 111/120 cases even though the first required link was absent.
+Phi also produced 62 parse-null outputs in minimal missing-second cases and did
+not meet the full-context strict-format requirement. These raw-output behaviors
+are distinct from ordinary accuracy failures and are retained in the artifact.
+
+### Interpretation and decision
+
+The screen establishes that both configurations can use complete, minimal
+two-record support, but neither meets the stricter requirement to withhold an
+answer under counterfactual or incomplete evidence. Qwen is the stronger of the
+two on supported routing, but it still fails the counterfactual and missing-link
+requirements. Phi additionally fails basic bank-level capability consistency.
+
+This is a valid negative **development** result. It does not estimate stable
+memory interactions, predictive interaction utility, severe-deletion retention,
+or the Phase 2-R P2-A/P2-B scientific gates. Therefore it neither confirms nor
+refutes the HiberMem interaction hypothesis. Confirmation, the held-out test,
+and Phase 3 remain locked.
+
+Do not alter these thresholds after observing the results, rerun either screen
+as if it were new evidence, or create a confirmation configuration from either
+candidate. Any follow-up prompt/task redesign must receive a new protocol
+version, fresh development banks, and its own model-selection screen.
+
+### v2 evidence locations
+
+- Qwen report: `results/report.json`
+- Qwen bundle: `results/hibermem-v2-qwen-8991ba49e14f-artifacts/`
+- Phi report: `results/report_phi.json`
+- Phi bundle: `results/hibermem-v2-phi-8991ba49e14f-artifacts/`
+- Shared source commit: `8991ba49e14f064575fed5c4eafd7eee33197cc4`
+- Qwen revision: `cdbee75f17c01a7cc42f958dc650907174af0554`
+- Phi revision: `cfbefacb99257ffa30c83adab238a50856ac3083`
+
+## Historical v1 screen — 2026-08-29
+
+The sections below preserve the earlier v1 results and workflow. They are not
+the current v2 protocol, and their bank IDs, generation count, missing-link
+metric, and qualification rules must not be combined with the v2 numbers above.
+
+### Plain-language summary
 
 We tested whether two larger instruction models can solve a small memory task
 *by using both facts that the task requires*. Both models could answer questions
@@ -218,4 +316,3 @@ confirmation, and held-out test data.
 The initial combined archive is present locally but is intentionally untracked.
 The Phi retry artifact should also be downloaded and preserved with the run
 record.
-

@@ -1,14 +1,58 @@
 # HiberMem Handoff
 
-**Updated:** 2026-08-30
+**Updated:** 2026-08-31
 
-**Current scientific state:** P0/P1 passed; SmolLM2 pilot and reported Qwen/Phi v1 qualification failed; no validated full v2 screen yet (accidental two-bank inference occurred inside a failed unit test)
+**Current scientific state:** P0/P1 passed. The SmolLM2 pilot and Qwen/Phi v1
+screens were negative. Full Qwen/Phi v2 bundles are now independently validated
+negative screens. Gemma's pasted v2 report is also negative; its raw bundle has
+not been independently validated locally.
 
 **Locked state:** P2-B not evaluated; Gate P2 undecided; Phase 3 blocked
 
-## Current next action — Phase 2-R v2
+## Current next action — E1 exact-coalition development diagnostic
 
-### Test-isolation recovery after commit 3f2c74f (current)
+Read:
+
+- [Archived audit](docs/ADVERSARIAL_RESEARCH_AUDIT_2026-08-31.md).
+- [E0–E6 implementation plan](docs/NEXT_EXPERIMENT_IMPLEMENTATION_PLAN_2026-08-31.md).
+- [Exact-mechanism Kaggle execution](docs/EXACT_MECHANISM_KAGGLE.md).
+
+The central prospective claim remains unverified. Qwen nevertheless has a strong
+local empty-context pair contrast: 0.933333, exploratory bank-bootstrap 95% interval
+[0.866667,1]. Phi is 0.016667 [−0.033333,0.066667]. Gemma's implied aggregate contrast
+is 0.116667, with no raw-data interval available. Local complementarity is not a
+v2 qualification pass, global SII stability, or future retention evidence.
+
+The old pilot's severe-deletion policy advantage is 0.01 [−0.03,0.05], versus a
+surrogate item-value baseline. Its additive/quadratic discovery R2 values are
+in-sample, not cross-query. Do not claim a demonstrated win against exact Shapley.
+
+E0/E1/E2 are implemented. E1 uses development banks 320–321, four distinct two-hop
+queries per eight-item bank, all 256 masks: 2,048 conditions. E2 reuses these facts
+for paired original/reversed-record/reversed-option presentation: 6,144 conditions.
+The analyzer labels exact values, surrogate quantities, and same-query retention.
+It evaluates no future queries and returns no qualification decision. Scores use
+12-decimal numerical tie stabilization followed by canonical player order.
+
+Source/config must be reviewed, committed, and pushed by the user before real
+inference. No commit or push has been performed. Use the new full commit hash,
+not 8991ba49e14f. The launcher retains Kaggle torch, uses a new pip-less environment,
+and saves tests, runtime, raw token traces, and resumable per-condition evidence.
+Real E1/E2 Kaggle execution remains pending. Gemma is not supported in this new
+runner until its external adapter receives a separate provenance implementation.
+
+130 local tests and Bash syntax checks passed. Full E1/E2 mock runs (2,048/6,144
+conditions) passed independent validation; symbolic presentation changes have zero
+utility effect. Reports are under `results/exact_mechanism_local_verification/`.
+These are engineering-only checks, not new LLM evidence. The pre-existing modifications in
+`docs/PHASE2R_KAGGLE_SCREENING_RESULTS_2026-08-29.md` were preserved. Semantic versus
+functional factorial experiments (E3), prospective retention (E4), matched lesions
+(E5), and large conversational-memory evaluation (E6) remain future work, with
+confirmation/test access still disabled.
+
+## Historical next-action notes — Phase 2-R v2 (superseded)
+
+### Test-isolation recovery after commit 3f2c74f (historical)
 
 Kaggle successfully installed the environment and detected two Tesla T4 GPUs.
 The source-rejection test incorrectly assumed that its temporary folder was

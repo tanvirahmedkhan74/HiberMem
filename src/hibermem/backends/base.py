@@ -17,6 +17,9 @@ class GenerationResult:
     text: str
     input_tokens: int | None = None
     output_tokens: int | None = None
+    # Optional immutable-by-convention evidence for audited experiment runners.
+    # Legacy cache/scoring consumers retain their existing behavior.
+    trace: dict[str, object] | None = None
 
 
 class LLMBackend(ABC):
