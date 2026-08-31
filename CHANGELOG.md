@@ -5,6 +5,28 @@ gate status is stated separately from engineering smoke-test status.
 
 ## 2026-08-31
 
+### Real E3 core analysis and matched decode64 preparation
+
+- Independently validated the complete real Qwen E3 core bundle at e98cf871877b:
+  16,384 calls, no reused checkpoints, about 2 h 39 min runtime. The user's printed
+  model_loaded=false block was the symbolic preflight, not the real run.
+- Saved detailed family-level findings. Direct/OR2 supported accuracy exceeds
+  99.9%; AND2 is 50.49% and AND3 16.21%. Of 2,185 parse-null outputs, 2,096 hit
+  the 16-token cap; raw traces frequently stop mid-chain. At keep=2, all apparent
+  AND3 successes are unsupported. Preserved primary scores and qualification locks.
+- Put the large presentation run on hold. Added a separate e3_decode64 config
+  differing from core only in max_new_tokens (16 → 64), plus a launcher route.
+  Existing core/presentation configs, model, prompt, scorer and backend are unchanged.
+- Added a read-only validated report auditor and matched-budget comparator, with
+  runtime/input/prefix/early-stop checks and exclusive creation of optional audit
+  output files. No historical report is rewritten, and no decoding recovery is assumed.
+- Verification: 181 local tests passed; decode64 dry-run and all 16,384 symbolic
+  controls passed without a model; Bash syntax and whitespace checks passed. The
+  saved v2 audit excludes a 5.55e-17 roundoff value from positive AND3 sign matches
+  (37 positive, ten negative, one numerical zero); original results are unchanged.
+- Updated findings, roadmap, handoff and Kaggle instructions. No real decode64 run,
+  new model installation, commit/push or gate unlock was performed locally.
+
 ### E1/E2 result review and revised E3a factorial implementation
 
 - Independently validated both real Qwen E1/E2 bundles at aa97b3aa9b93. Original

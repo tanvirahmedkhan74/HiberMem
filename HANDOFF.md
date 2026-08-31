@@ -9,7 +9,7 @@ not been independently validated locally.
 
 **Locked state:** P2-B not evaluated; Gate P2 undecided; Phase 3 blocked
 
-## Current next action — E3a factorial development diagnostic
+## Current next action — matched E3 decode64 diagnostic
 
 Read:
 
@@ -18,6 +18,30 @@ Read:
 - [Exact-mechanism Kaggle execution](docs/EXACT_MECHANISM_KAGGLE.md).
 - [Revised E3 theory and implementation](docs/E3_REVISED_IMPLEMENTATION_PLAN_2026-08-31.md).
 - [E3 Kaggle execution](docs/E3_KAGGLE.md).
+- [Real E3 core findings and revised decision](docs/E3_CORE_RESULTS_AND_NEXT_STEP_2026-08-31.md).
+
+Real E3 core at e98cf871877ba22fb721d3d3153feabb6a41ec68 independently validated:
+16,384 real calls, zero checkpoint reuse, completed in about 2 h 39 min. The pasted
+model_loaded=false output was symbolic preflight; the bundle contains real Qwen
+evidence. Direct/OR2 supported correctness is above 99.9%, AND2 50.49%, AND3 16.21%.
+AND2 full accuracy is 37.5%; AND3 full accuracy zero. There are 2,168 outputs at the
+16-token cap and 2,096 parse-null capped outputs. Many raw prefixes stop mid-chain.
+AND3 keep=2 successes are entirely unsupported. The original result stays unchanged.
+
+Hold the 49,152-case presentation run. The next config is
+`configs/experiments/exact_mechanism_e3_decode64.json`: all original cases and
+settings, only max_new_tokens increased to 64. No prompt/parser/history changes.
+The new read-only auditor/comparator validates bundles, compares runtime/input
+tokens/short-output prefixes and flags drift. Preserve the core bundle, publish
+the new preparation, then run e3_decode64 using the updated Kaggle guide. Real
+decode64 execution remains pending. No model inference, commit or push was done
+locally. E3b/E4/E5/E6 and confirmation/test remain unavailable.
+
+Preparation verified: 181 local tests, 16,384-condition decode64 dry-run/symbolic
+controls, Bash syntax and diff checks passed. Current read-only audit:
+`results/E_results/e3_core_e98cf871877b_audit_20260831_v2.json` (roundoff-aware signs).
+
+## Historical E3a preparation (superseded where pending)
 
 Real Qwen E1 (2,048) and E2 (6,144) bundles at aa97b3aa9b93 independently
 validated, including after the E3a extension. Original outputs reproduce exactly.

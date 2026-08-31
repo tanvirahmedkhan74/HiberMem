@@ -5,7 +5,8 @@ Authority: [adversarial audit](ADVERSARIAL_RESEARCH_AUDIT_2026-08-31.md) and the
 
 Current update: [E3 revised theory and implementation plan](E3_REVISED_IMPLEMENTATION_PLAN_2026-08-31.md)
 supersedes the E3/E4 details below. Real E1/E2 artifacts in `results/E_results`
-independently validated; E3a is implemented and awaiting real inference.
+independently validated. Real E3 core also validated; [core findings](E3_CORE_RESULTS_AND_NEXT_STEP_2026-08-31.md)
+place presentation on hold pending the prepared matched decode64 diagnostic.
 
 ## Invariants
 
@@ -24,7 +25,8 @@ independently validated; E3a is implemented and awaiting real inference.
 | E0 | Reproduce local four-corner interactions from existing v2 bundles | Read-only validated Qwen/Phi artifacts; no inference | Implemented; estimates reproduced |
 | E1 | Measure full coalition games and approximation error | Development banks 320–321, 8 items, 4 two-hop queries each, 256 masks = 2,048 conditions | Real Qwen run complete and independently validated |
 | E2 | Presentation sensitivity | Same E1 facts: original, reversed records/options = 6,144 conditions | Real Qwen run complete; full accuracy falls to .75 under record reversal |
-| E3a | Lexical overlap × functional dependency | Banks 340–341, direct/AND2/OR2/AND3, paired worlds; 16,384 core / 49,152 presentation conditions | Implemented; real inference pending; no qualification capability |
+| E3a | Lexical overlap × functional dependency | Banks 340–341, direct/AND2/OR2/AND3, paired worlds; 16,384 core / 49,152 presentation conditions | Real core validated; presentation on hold due to chain-output/cap confound |
+| E3 decode64 | Matched decoding-budget diagnostic | Same 16,384 core cases; max_new_tokens 16 → 64 only | Config, launcher route and read-only comparator prepared; real run pending |
 | E3b | Broader semantic/conflict/temporal controls | Independently checked semantic manipulation and explicit authority/as-of-time scoring | Planned, not implemented |
 | E4 | Prospective retention | Freeze protocol on development; independent bank cohorts and past/future streams; exact and budget-conditioned baselines | Blocked on development review and preregistration |
 | E5 | Matched structural lesion | Separate future cohort; match count/cost/item utility and nuisance factors | Blocked on prospective evidence |

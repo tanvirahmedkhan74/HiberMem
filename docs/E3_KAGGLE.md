@@ -1,8 +1,11 @@
-# E3a: local checks and Kaggle execution
+# E3a: matched decoding diagnostic and Kaggle execution
 
 Read the [revised theory and implementation plan](E3_REVISED_IMPLEMENTATION_PLAN_2026-08-31.md).
-E1/E2 real Qwen diagnostics are complete. E3a is implemented but has not run on a
-real model. Use Qwen only in this initial matrix; no model search or Gemma adapter.
+E1/E2 and the real E3 core Qwen run are complete and independently validated.
+Read the [E3 core findings and next-step decision](E3_CORE_RESULTS_AND_NEXT_STEP_2026-08-31.md).
+The current next run is **e3_decode64**, not the large presentation matrix. It
+changes only the generation cap from 16 to 64, preserving all prompts and scoring.
+Use the same pinned Qwen model; no model search or Gemma adapter.
 
 ## Before Kaggle
 
@@ -10,22 +13,25 @@ From the repository, use the project Conda interpreter:
 
 ```powershell
 .\.conda\python.exe scripts\run_tests.py -q
-.\.conda\python.exe scripts\run_exact_mechanism.py --config configs\experiments\exact_mechanism_e3_core.json --dry-run
-.\.conda\python.exe scripts\run_exact_mechanism.py --config configs\experiments\exact_mechanism_e3_core.json --controls-only
+.\.conda\python.exe scripts\run_exact_mechanism.py --config configs\experiments\exact_mechanism_e3_decode64.json --dry-run
+.\.conda\python.exe scripts\run_exact_mechanism.py --config configs\experiments\exact_mechanism_e3_decode64.json --controls-only
 ```
 
-The core plan is **16,384 conditions**. The presentation follow-up is **49,152**,
-including a repeat of the originals. Both are two-bank development diagnostics.
+The decode64 plan is **16,384 conditions**, exactly matching the completed core
+matrix. The existing **49,152**-condition presentation config is still 16-token and
+is on hold. Both are two-bank development diagnostics, never independent test sets.
 Review the intended changes, then commit and push them yourself. Use that new
-published full hash from `git rev-parse HEAD`; `aa97b3aa9b93` predates E3a.
-No commit, push, package installation or real-model run was performed locally.
+published full hash from `git rev-parse HEAD`; `e98cf871877b` predates decode64
+preparation. No commit, push, package installation or real-model run was performed
+locally. Preserve the original core bundle for comparison; never resume it using
+the changed cap.
 
-## Fresh Kaggle notebook: core experiment
+## Fresh Kaggle notebook: matched decode64 experiment
 
 Enable Internet and GPU acceleration. The existing launcher retains Kaggle's CUDA
 torch and installs the existing experiment requirements in a pip-less environment.
-The unit suite blocks real-model initialization. E3a itself still needs cloud
-verification; local symbolic success is not evidence of Qwen performance.
+The unit suite blocks real-model initialization. Decode64 still needs a real run;
+local symbolic success cannot establish that a larger cap improves Qwen.
 
 Cell 1:
 
@@ -35,7 +41,7 @@ import re
 
 os.environ["HIBERMEM_REF"] = "PASTE_NEW_PUBLISHED_FULL_40_CHARACTER_COMMIT_HASH"
 os.environ["HIBERMEM_CANDIDATE"] = "qwen"
-os.environ["HIBERMEM_EXPERIMENT"] = "e3_core"
+os.environ["HIBERMEM_EXPERIMENT"] = "e3_decode64"
 assert re.fullmatch(r"[0-9a-f]{40}", os.environ["HIBERMEM_REF"])
 ```
 
@@ -92,19 +98,37 @@ if report["status"] == "complete":
     print("Development only; no qualification or future-query result.")
 ```
 
-## Presentation follow-up, after reviewing core
+## Presentation follow-up — on hold after core review
 
-Keep the exact same source and environment. Do not tune the prompt or endpoint
-using core outputs and silently call a changed run the same experiment.
+Do not run `e3_presentation` as the automatic next step. It remains the original
+16-token configuration, useful only if that historical sensitivity is explicitly
+desired. After decoding review, any presentation experiment under a changed cap
+needs a separately frozen config. Do not silently edit the old config or reuse its
+checkpoints. Different presentations/worlds are paired interventions, not new banks.
 
-```python
-os.environ["HIBERMEM_EXPERIMENT"] = "e3_presentation"
+## Compare the two downloaded bundles locally
+
+After extracting the new archive, run the read-only comparator. Replace the second
+path with the actual decode64 report path; each report must retain its sibling
+config, manifest, runtime and evaluations files.
+
+```powershell
+.\.conda\python.exe scripts\analyze_factorial_report.py --report results\E_results\hibermem-exact-e3_core-qwen-e98cf871877b-20260831T081831Z-73\results\exact_mechanism\e3_core-qwen\run\report.json --compare PATH_TO_DECODE64_RUN\report.json --output results\E_results\e3_decode_comparison.json
 ```
 
-Then rerun cells 3–5. This independently runs original/reversed-record/reversed-option
-conditions; it does not import core checkpoints. Record IDs and logical player
-indices remain fixed under record-order reversal. Different presentations/worlds
-are paired interventions on the same banks, not new independent samples.
+The comparator validates both bundles and checks input tokens, rendered prompts,
+short-output token prefixes, early-stop completion identity and runtime equality.
+Its top-level summary describes the short-budget `--report`; paired changes appear
+under `decoding_comparison`. Audit the longer report separately to summarize all
+of its refitted retention policies.
+It records source identity differences. `matched_decode_only_evidence=false` means
+other differences or missing real evidence prevent a clean paired interpretation;
+it is never a qualification verdict. A matching comparison still evaluates only
+development queries. The output must be a new filename: existing audit files are
+never overwritten. Do not extract the last DS label or alter the original parser.
+
+For single-report auditing omit `--compare`. The saved core audit is
+`results/E_results/e3_core_e98cf871877b_audit_20260831_v2.json` (roundoff-aware sign counts).
 
 ## Report interpretation and recovery
 

@@ -3,12 +3,12 @@
 set -euo pipefail
 : "${HIBERMEM_REF:?Set the full committed source revision}"
 : "${HIBERMEM_CANDIDATE:?Choose qwen or phi}"
-: "${HIBERMEM_EXPERIMENT:?Choose e1, e2, e3_core, or e3_presentation}"
+: "${HIBERMEM_EXPERIMENT:?Choose e1, e2, e3_core, e3_decode64, or e3_presentation}"
 [[ "${HIBERMEM_REF}" =~ ^[0-9a-f]{40}$ ]] || exit 2
 [[ "${HIBERMEM_CANDIDATE}" == qwen || "${HIBERMEM_CANDIDATE}" == phi ]] || exit 2
 case "${HIBERMEM_EXPERIMENT}" in
   e1|e2) ;;
-  e3_core|e3_presentation)
+  e3_core|e3_presentation|e3_decode64)
     [[ "${HIBERMEM_CANDIDATE}" == qwen ]] || { echo "E3a freezes Qwen only" >&2; exit 2; } ;;
   *) exit 2 ;;
 esac

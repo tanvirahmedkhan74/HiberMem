@@ -1,6 +1,9 @@
 # E3 revision and prospective roadmap — 2026-08-31
 
-Status: E3a implemented and locally verified; real inference pending. This document
+Status update: real E3 core is complete and independently validated; the large
+presentation run is on hold. The [core findings and revised next step](E3_CORE_RESULTS_AND_NEXT_STEP_2026-08-31.md)
+take precedence over the original sequencing below. A matched decode64 diagnostic
+is prepared; real execution remains pending. This document
 supersedes E3–E4 details in the earlier E0–E6 plan, not any historical outcome.
 
 ## Evidence motivating the revision
@@ -94,7 +97,8 @@ Core config: 2 banks * 4 families * 2 overlap levels * 2 worlds * 1 presentation
 2 queries * 256 masks = **16,384 generations**.
 Presentation config: same matrix * 3 presentations = **49,152 generations**.
 Both include originals; do not pool repeated conditions as independent evidence.
-Start with core; presentation is a separate, larger follow-up. Prior Qwen latency
+Original sequence (now superseded by the decoding diagnostic): start with core;
+presentation is a separate, larger follow-up. Prior Qwen latency
 of about .46 seconds/generation suggests roughly 2.1/6.3 inference-hours before
 overhead, but the new prompt may change this substantially. Dry-run counts are
 exact; time estimates are not guarantees. No inference is launched by this work.
@@ -156,7 +160,7 @@ E5 matched lesions require prospective evidence and separately reserved outcomes
 E6 natural conversational memory/scale follows mechanism and lesion evidence.
 No hyperbolic geometry or biological engram claim is established by E3.
 
-## Verified implementation status
+## Historical initial implementation verification
 
 - 163 tests passed in the project Conda environment, including independent
   analytic SII definitions, OR support, higher-order effects, counterfactual
@@ -175,3 +179,18 @@ No hyperbolic geometry or biological engram claim is established by E3.
 - Source/config must be reviewed, committed and published before real E3a use;
   no commit, push, package installation, real-model inference or gate unlock was
   performed. See [E3 Kaggle instructions](E3_KAGGLE.md).
+
+## Post-core update
+
+The user published e98cf871877b and supplied all 16,384 real core records. Direct
+and OR2 supported accuracy is above 99.9%, but AND2 is 50.49% and AND3 16.21%.
+There are 2,168 outputs at the 16-token cap; 2,096 of 2,185 parse-null outputs hit
+that cap. All AND3 correct answers at keep=2 are unsupported. These are valid
+development outcomes under the original config, not infrastructure errors.
+
+Before presentation, run the new `exact_mechanism_e3_decode64.json`: same complete
+matrix, only max_new_tokens changes to 64. The original core and presentation
+configs stay unchanged. A read-only audit/comparator checks design identity,
+runtime and token prefixes and preserves all old artifacts. No output rescue,
+prompt change, history carryover or gate relaxation is included. See the linked
+findings for decision branches; no automatic numerical pass threshold is created.

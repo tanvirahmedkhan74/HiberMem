@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "protocol": "phase2r-factorial-mechanism-v1",
+  "scientific_gate_eligible": false,
+  "confirmation_compatible": false,
+  "calibration": {"n_banks": 2, "bank_start": 340, "seed": 20260831},
+  "families": ["direct", "and2", "or2", "and3"],
+  "overlap_levels": ["low", "high"],
+  "worlds": ["base", "counterfactual"],
+  "variants": ["original"],
+  "generation": {"do_sample": false, "max_new_tokens": 64},
+  "keep_counts": [2, 3, 4, 6],
+  "random_seeds": [0, 1, 2, 3, 4],
+  "candidates": {
+    "qwen": {
+      "type": "hf_local", "model_id": "Qwen/Qwen3-4B-Instruct-2507",
+      "model_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+      "device": "cuda", "dtype": "float16", "quantization": "none",
+      "local_files_only": false, "trust_remote_code": false
+    }
+  }
+}
