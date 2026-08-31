@@ -9,13 +9,40 @@ not been independently validated locally.
 
 **Locked state:** P2-B not evaluated; Gate P2 undecided; Phase 3 blocked
 
-## Current next action — E1 exact-coalition development diagnostic
+## Current next action — E3a factorial development diagnostic
 
 Read:
 
 - [Archived audit](docs/ADVERSARIAL_RESEARCH_AUDIT_2026-08-31.md).
 - [E0–E6 implementation plan](docs/NEXT_EXPERIMENT_IMPLEMENTATION_PLAN_2026-08-31.md).
 - [Exact-mechanism Kaggle execution](docs/EXACT_MECHANISM_KAGGLE.md).
+- [Revised E3 theory and implementation](docs/E3_REVISED_IMPLEMENTATION_PLAN_2026-08-31.md).
+- [E3 Kaggle execution](docs/E3_KAGGLE.md).
+
+Real Qwen E1 (2,048) and E2 (6,144) bundles at aa97b3aa9b93 independently
+validated, including after the E3a extension. Original outputs reproduce exactly.
+Original severe-budget mean accuracy is tied at .25 for quadratic/exact Shapley;
+the 62.5%-deletion baseline advantage includes unsupported correct guesses.
+Record reversal lowers full accuracy from 1 to .75. No future queries were tested.
+
+E3a is now implemented: banks 340–341, eight items and two queries per bank,
+direct/AND2/OR2/AND3 crossed with lexical theme overlap and counterfactual worlds.
+Core has 16,384 conditions; the presentation follow-up has 49,152. The new protocol
+uses support antichains (OR is either-sufficient), a prompt-reading symbolic oracle,
+exact SII/Mobius cross-checks, original-score policy selection with support
+decomposition, cubic selection, randomized ties and frozen presentation transfer.
+Lexical theme overlap is not full semantic validation. No submodular greedy guarantee
+is claimed for positive AND complementarity. E3b semantic/conflict/temporal work and
+E4 prospective evaluation remain unimplemented; no confirmation/test access exists.
+
+Review and publish a new source revision before real E3a inference. No commit,
+push, dependency installation or real-model run was performed in this change.
+Local verification: 163 tests passed. Full core (16,384) and presentation (49,152)
+mock runs independently validated, with zero symbolic lexical/presentation changes.
+Reports are under `results/factorial_mechanism_local_verification/`. Bash syntax
+and diff whitespace checks passed. None of this is new real-model evidence.
+
+## Historical E0–E2 implementation handoff (superseded where pending)
 
 The central prospective claim remains unverified. Qwen nevertheless has a strong
 local empty-context pair contrast: 0.933333, exploratory bank-bootstrap 95% interval

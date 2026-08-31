@@ -5,6 +5,34 @@ gate status is stated separately from engineering smoke-test status.
 
 ## 2026-08-31
 
+### E1/E2 result review and revised E3a factorial implementation
+
+- Independently validated both real Qwen E1/E2 bundles at aa97b3aa9b93. Original
+  E2 reproduces E1's 2,048 requests/outputs/rewards exactly. Original severe-budget
+  mean accuracy ties quadratic and exact Shapley at .25; supported/unsupported
+  decomposition reveals guesses benefiting the item-value baseline. Full accuracy
+  falls from 1 to .75 after record reversal. No future-query claim is supported.
+- Saved a revised E3a/E3b/E4 implementation plan with primary mathematical sources,
+  analytic AND/OR/three-way examples, and the explicit absence of a general
+  submodular greedy guarantee. Preserved original scoring and all old negatives.
+- Implemented development-only direct/AND2/OR2/AND3 games with lexical theme
+  overlap, paired counterfactual worlds and stateless presentation variants.
+  Support uses alternative minimal sufficient sets; the text oracle reads prompts
+  independently. E3a lexical overlap is not full semantic validation.
+- Added per-query exact SII cross-checks, null/contextual deviations, support
+  decomposition for every policy, cubic selection, seeded tie sensitivity and
+  frozen presentation prediction/selection transfer (not future-query evaluation).
+- Extended the whitelisted resumable runner/validator and existing Kaggle launcher
+  for e3_core/e3_presentation; retained legacy E1/E2 behavior and torch bootstrap.
+  Added execution documentation and corrected the historical archive-download glob.
+- Verification: 163 tests passed; full 16,384-condition core and 49,152-condition
+  presentation mock runs independently validated. Symbolic lexical/presentation
+  interventions have zero utility effect. Both historical real E1/E2 bundles still
+  validate. Bash syntax and diff whitespace checks passed.
+- Real E3a inference remains pending. E3b conflict/temporal/semantic extensions,
+  E4 prospective scoring, E5 lesions and E6 scaling are not implemented. No source
+  commit/push, package install, real-model execution or gate unlock was performed.
+
 ### Adversarial audit and exact-coalition development diagnostics
 
 - Archived the mathematical/empirical audit and an E0–E6 experiment roadmap.

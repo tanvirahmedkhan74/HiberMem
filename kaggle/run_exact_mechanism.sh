@@ -1,12 +1,17 @@
 #!/usr/bin/env bash
-# E1/E2 diagnostics only. No screen qualification, confirmation, or test access.
+# E1/E2/E3a diagnostics only. No screen qualification, confirmation, or test access.
 set -euo pipefail
 : "${HIBERMEM_REF:?Set the full committed source revision}"
 : "${HIBERMEM_CANDIDATE:?Choose qwen or phi}"
-: "${HIBERMEM_EXPERIMENT:?Choose e1 or e2}"
+: "${HIBERMEM_EXPERIMENT:?Choose e1, e2, e3_core, or e3_presentation}"
 [[ "${HIBERMEM_REF}" =~ ^[0-9a-f]{40}$ ]] || exit 2
 [[ "${HIBERMEM_CANDIDATE}" == qwen || "${HIBERMEM_CANDIDATE}" == phi ]] || exit 2
-[[ "${HIBERMEM_EXPERIMENT}" == e1 || "${HIBERMEM_EXPERIMENT}" == e2 ]] || exit 2
+case "${HIBERMEM_EXPERIMENT}" in
+  e1|e2) ;;
+  e3_core|e3_presentation)
+    [[ "${HIBERMEM_CANDIDATE}" == qwen ]] || { echo "E3a freezes Qwen only" >&2; exit 2; } ;;
+  *) exit 2 ;;
+esac
 [[ -d /kaggle/working ]] || { echo "Kaggle is required" >&2; exit 2; }
 ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "${ROOT}"

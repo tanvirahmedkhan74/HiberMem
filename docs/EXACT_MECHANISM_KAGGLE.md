@@ -1,5 +1,9 @@
 # E0 / E1 / E2 execution
 
+Update 2026-08-31: real E1/E2 Qwen bundles have independently validated. For the
+new E3a experiments use [E3 Kaggle instructions](E3_KAGGLE.md). The commands below
+remain the historical E0/E1/E2 route, not the current next experiment.
+
 These commands implement the first tranche of the
 [next-experiment plan](NEXT_EXPERIMENT_IMPLEMENTATION_PLAN_2026-08-31.md).
 E1/E2 completion is **not qualification**. All historical v2 failures stand;
@@ -71,7 +75,7 @@ Cell 4, artifact links:
 ```python
 from pathlib import Path
 from IPython.display import FileLink, display
-for artifact in sorted(Path("/kaggle/working").glob("hibermem-exact-*-artifacts.tar.gz")):
+for artifact in sorted(Path("/kaggle/working").glob("hibermem-exact-*.tar.gz")):
     display(FileLink(str(artifact)))
 ```
 

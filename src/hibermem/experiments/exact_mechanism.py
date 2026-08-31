@@ -13,8 +13,10 @@ from pathlib import Path
 from hibermem.backends import HFLocalBackend, MockBackend
 from hibermem.coalition.masks import mask_to_index
 from hibermem.environments.controlled.mechanism import PROTOCOL, generate_mechanism_suite
+from hibermem.environments.controlled import factorial as factorial_env
 from hibermem.environments.controlled.prompts import prompt_template_hash
 from hibermem.evaluation.mechanism import summarize_mechanism
+from hibermem.evaluation.factorial import summarize_factorial
 from hibermem.evaluation.scoring import parse_action
 from .phase2 import _atomic_json, _json_hash, _source_tree_sha256, git_provenance, make_backend, runtime_provenance
 
@@ -23,10 +25,24 @@ CAPABILITIES = {"scientific_gate_eligible": False, "confirmation_compatible": Fa
 ARTIFACTS = ("config.json", "manifest.json", "identity.json", "runtime.json", "controls.json", "evaluations.json")
 
 
+def _prompt_hash(suite):
+    return (factorial_env.prompt_template_hash() if isinstance(suite, factorial_env.FactorialSuite)
+            else prompt_template_hash())
+
+
+def _summarize(rows, suite, config):
+    return (summarize_factorial(rows, suite, config) if isinstance(suite, factorial_env.FactorialSuite)
+            else summarize_mechanism(rows, suite, config))
+
+
 def validate_config(config):
     expected_keys = {"schema_version", "protocol", "scientific_gate_eligible", "confirmation_compatible",
                      "calibration", "variants", "generation", "keep_counts", "random_seeds", "candidates"}
-    if set(config) != expected_keys or config["schema_version"] != 1 or config["protocol"] != PROTOCOL:
+    is_factorial = config.get("protocol") == factorial_env.PROTOCOL
+    if is_factorial:
+        expected_keys |= {"families", "overlap_levels", "worlds"}
+    if (set(config) != expected_keys or type(config["schema_version"]) is not int
+            or config["schema_version"] != 1 or config["protocol"] not in (PROTOCOL, factorial_env.PROTOCOL)):
         raise ValueError("exact mechanism requires its explicit versioned config fields")
     if config["scientific_gate_eligible"] is not False or config["confirmation_compatible"] is not False:
         raise ValueError("development diagnostics cannot enable scientific/confirmation capability")
@@ -54,10 +70,16 @@ def validate_config(config):
             raise ValueError("pin a full model revision")
         if backend.get("trust_remote_code") is not False or backend.get("quantization") != "none":
             raise ValueError("remote code and quantization are outside this diagnostic version")
+    if is_factorial:
+        return factorial_env.generate_factorial_suite(
+            **config["calibration"], variants=config["variants"], families=config["families"],
+            overlap_levels=config["overlap_levels"], worlds=config["worlds"])
     return generate_mechanism_suite(**config["calibration"], variants=config["variants"])
 
 
 def symbolic_controls(suite):
+    if isinstance(suite, factorial_env.FactorialSuite):
+        return factorial_env.symbolic_controls(suite)
     oracle = MockBackend()
     checked, query_outputs = 0, {}
     for case in suite.conditions():
@@ -169,7 +191,7 @@ def _read(path):
 
 def validate_mechanism_report(path: Path, *, allow_mock=False):
     report, directory = _read(path), path.parent
-    if report.get("protocol") != PROTOCOL or report.get("status") != "complete":
+    if report.get("protocol") not in (PROTOCOL, factorial_env.PROTOCOL) or report.get("status") != "complete":
         raise ValueError("a complete exact-mechanism report is required")
     if any(type(report.get(key, "missing")) is not type(value) or report[key] != value
            for key, value in CAPABILITIES.items()):
@@ -183,9 +205,11 @@ def validate_mechanism_report(path: Path, *, allow_mock=False):
             raise ValueError(f"artifact hash mismatch: {name}")
     config, identity = _read(directory / "config.json"), _read(directory / "identity.json")
     suite = validate_config(config)
+    if report["protocol"] != config["protocol"]:
+        raise ValueError("report/config protocol mismatch")
     if report["identity"] != identity or identity["config_sha256"] != _json_hash(config):
         raise ValueError("config/run identity mismatch")
-    if identity["prompt_template_sha256"] != prompt_template_hash():
+    if identity["prompt_template_sha256"] != _prompt_hash(suite):
         raise ValueError("prompt template mismatch; use the archived source version")
     if _read(directory / "manifest.json") != suite.manifest() or identity["suite_sha256"] != _json_hash(suite.manifest()):
         raise ValueError("suite identity mismatch")
@@ -193,7 +217,7 @@ def validate_mechanism_report(path: Path, *, allow_mock=False):
     if report["engineering_only"] != (candidate == "mock"):
         raise ValueError("candidate evidence label mismatch")
     backend = {"type": "mock"} if candidate == "mock" else config["candidates"][candidate]
-    if identity["backend"] != backend or identity["protocol"] != PROTOCOL:
+    if identity["backend"] != backend or identity["protocol"] != config["protocol"]:
         raise ValueError("backend identity mismatch")
     runtime = _read(directory / "runtime.json")
     if runtime["source_tree_sha256"] != identity["source_tree_sha256"]:
@@ -217,7 +241,7 @@ def validate_mechanism_report(path: Path, *, allow_mock=False):
         validate_row(row, case, report["engineering_only"])
     if _read(directory / "controls.json") != symbolic_controls(suite):
         raise ValueError("control mismatch")
-    analysis = summarize_mechanism(rows, suite, config)
+    analysis = _summarize(rows, suite, config)
     if not _analysis_equal(report["analysis"], analysis):
         raise ValueError("analysis mismatch")
     return report
@@ -231,10 +255,10 @@ def run_mechanism(*, root: Path, config: dict, candidate: str, run_dir: Path):
     git = git_provenance(root)
     if candidate != "mock" and (not git["available"] or git["source_dirty"]):
         raise RuntimeError("commit source/config before real inference")
-    identity = {"protocol": PROTOCOL, "candidate": candidate, "backend": backend_config,
+    identity = {"protocol": config["protocol"], "candidate": candidate, "backend": backend_config,
                 "config_sha256": _json_hash(config), "suite_sha256": _json_hash(suite.manifest()),
                 "source_tree_sha256": _source_tree_sha256(root), "git_commit": git["commit"],
-                "prompt_template_sha256": prompt_template_hash()}
+                "prompt_template_sha256": _prompt_hash(suite)}
     identity_path = run_dir / "identity.json"
     if identity_path.exists() and _read(identity_path) != identity:
         raise RuntimeError("run identity changed; preserve old artifacts and use a new directory")
@@ -253,7 +277,7 @@ def run_mechanism(*, root: Path, config: dict, candidate: str, run_dir: Path):
         if not target.exists():
             _atomic_json(target, value)
     previous = _read(report_path) if report_path.exists() else {}
-    report = {"schema_version": 1, "protocol": PROTOCOL, **CAPABILITIES,
+    report = {"schema_version": 1, "protocol": config["protocol"], **CAPABILITIES,
               "engineering_only": candidate == "mock", "scope": "development diagnostics only; no qualification",
               "identity": identity, "git": git, "status": "running",
               "planned_conditions": suite.manifest()["planned_conditions"],
@@ -261,7 +285,8 @@ def run_mechanism(*, root: Path, config: dict, candidate: str, run_dir: Path):
     _atomic_json(report_path, report)
     backend = None
     try:
-        backend = make_backend(backend_config)
+        backend = (factorial_env.FactorialOracle() if candidate == "mock" and isinstance(suite, factorial_env.FactorialSuite)
+                   else make_backend(backend_config))
         if candidate != "mock" and type(backend) is not HFLocalBackend:
             raise ValueError("external backend adapters are not supported")
         runtime = runtime_provenance(root, backend)
@@ -295,7 +320,7 @@ def run_mechanism(*, root: Path, config: dict, candidate: str, run_dir: Path):
             if (index + 1) % 256 == 0:
                 print(f"{candidate}: {index + 1}/{report['planned_conditions']} conditions complete", flush=True)
         _atomic_json(run_dir / "evaluations.json", rows)
-        report["analysis"] = summarize_mechanism(rows, suite, config)
+        report["analysis"] = _summarize(rows, suite, config)
         report["checkpoint_reused"] = reused
         report["generation_calls_this_attempt"] = len(rows) - reused
         report["artifacts_sha256"] = {name: _file_hash(run_dir / name) for name in ARTIFACTS}
