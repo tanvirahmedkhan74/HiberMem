@@ -89,6 +89,8 @@ def test_e4_manifest_commits_but_does_not_expose_future_content() -> None:
         "query_id",
         "commitment_sha256",
     }
+    launcher = (ROOT / "kaggle/run_e4_prospective.sh").read_text()
+    assert 'HIBERMEM_MIN_FREE_STORAGE_GIB:-15' in launcher
 
 
 def test_e4_capabilities_are_distinct_and_future_cannot_fit() -> None:

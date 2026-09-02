@@ -34,6 +34,8 @@ def test_e3c_config_is_fresh_paired_and_development_only() -> None:
     assert manifest["scientific_gate_eligible"] is False
     assert manifest["future_queries_evaluated"] == 0
     assert config["calibration"]["bank_start"] >= 350
+    launcher = (ROOT / "kaggle/run_e3c_contract.sh").read_text()
+    assert 'HIBERMEM_MIN_FREE_STORAGE_GIB:-15' in launcher
 
 
 def test_contract_intervention_changes_prompt_not_structural_case() -> None:
@@ -103,4 +105,3 @@ def test_e3c_config_rejects_relaxed_or_scientific_mutations() -> None:
         pass
     else:
         raise AssertionError("scientific E3c mutation was accepted")
-

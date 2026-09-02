@@ -52,6 +52,9 @@ fi
 [[ -x "${ENV_PYTHON}" && -f "${ENV_DIR}/pyvenv.cfg" ]] || exit 2
 export HF_HOME="/kaggle/working/hf-cache-hibermem-qwen"
 export PYTORCH_CUDA_ALLOC_CONF="expandable_segments:True"
+# E4 loads the same single pinned Qwen checkpoint as E3. Keep the proven explicit
+# floor used by the existing Qwen Kaggle launchers; the verifier still records it.
+export HIBERMEM_MIN_FREE_STORAGE_GIB="${HIBERMEM_MIN_FREE_STORAGE_GIB:-15}"
 STAGE="dependency_install"
 "${BASE_PYTHON}" -m pip --python "${ENV_PYTHON}" install \
   -r configs/requirements/kaggle-phase2r-v2.txt -e '.[dev,reference]' \
