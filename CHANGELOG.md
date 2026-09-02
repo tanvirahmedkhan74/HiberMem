@@ -45,6 +45,12 @@ gate status is stated separately from engineering smoke-test status.
   complete future conditions. Both Bash launchers pass syntax checks. No real model
   inference, contract freeze, E4 result, commit/push, qualification, confirmation,
   or historical test unlock was performed.
+- The first published E3c Kaggle attempt at source `f137b55f72f3` stopped during
+  environment validation because the new launcher inherited the generic 30 GiB
+  free-space floor. It ran no tests, controls, or model inference and is not an E3c
+  result. E3c and E4 now explicitly use the established 15 GiB single-Qwen floor;
+  the verifier continues to record and enforce the effective value. No scientific
+  configuration or threshold changed.
 
 ## 2026-08-31
 

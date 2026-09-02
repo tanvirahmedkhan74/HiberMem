@@ -14,6 +14,10 @@ new commit. The E4 launcher refuses an engineering placeholder or uncommitted co
 Enable a GPU and Internet in a fresh Kaggle notebook. Replace the placeholder with
 the exact 40-character implementation commit.
 
+The launcher enforces 15 GiB of free working storage, matching the repository's
+existing single-Qwen workflow. Exit 2 at an environment/setup stage is infrastructure
+failure and contains no model conclusion.
+
 ### Cell 1 — immutable run settings
 
 ```python
@@ -236,4 +240,3 @@ display(FileLink(artifacts[-1]))
 - No prompt, threshold, policy, practical margin, or output parser is relaxed after
   viewing E4 future outcomes.
 - E5 begins only after a separately reviewed variance/power and confirmation plan.
-

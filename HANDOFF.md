@@ -25,6 +25,13 @@ design config. See the [E4 implementation plan](docs/E4_PROSPECTIVE_IMPLEMENTATI
 and [Kaggle cells](docs/E4_KAGGLE.md). Do not run the old 49,152-condition presentation
 config, unlock the historical test, or begin matched lesions.
 
+The first E3c Kaggle attempt from `f137b55f72f3` is infrastructure-only evidence:
+it stopped after dependency setup because the launcher inherited the generic 30 GiB
+free-space check. Tests, controls, and model inference did not run. The launchers now
+set the same explicit 15 GiB floor already used by the repository's single-Qwen
+workflows. Publish this repair under a new commit and rerun E3c from a fresh notebook;
+do not treat the archived exit-2 bundle as a negative model result.
+
 ## 2. Scientific claim and methodology
 
 The project tests whether external-memory interactions learned from past queries are
