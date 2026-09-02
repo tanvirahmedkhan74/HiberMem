@@ -1,7 +1,8 @@
 # E4 prospective retention implementation plan — 2026-09-02
 
-**Status:** E3c and E4 engineering/design code implemented and mock-validated; real
-E3c/E4 inference, variance planning, and confirmation have not run.
+**Status:** real E3c completed as a validated negative readiness screen. No contract
+passed, so real E4 inference, variance planning, and confirmation remain blocked.
+See the [E3c findings](E3C_OUTPUT_CONTRACT_RESULTS_2026-09-02.md).
 
 **Authority:** the [master research plan](../HiberMem_MASTER_RESEARCH_IMPLEMENTATION_PLAN.md),
 the [adversarial audit](ADVERSARIAL_RESEARCH_AUDIT_2026-08-31.md), and the
@@ -330,10 +331,14 @@ requirements for H1–H3.
    independent validator, tests, frozen-config tool, and Kaggle launcher.
 4. **Verified locally:** complete 16,384-condition E3c mock artifact and E4 mock
    past/freeze/future artifact independently validate; all are engineering-only.
-5. **Next:** review, commit, and run real E3c on Kaggle. Stop if no contract passes.
-6. Freeze one passing contract into a new committed E4 design config, then run only
-   the fresh E4 design cohort.
-7. Review development evidence; separately implement/freeze a variance cohort and
+5. **Completed negative:** real E3c at `90ef285bae7f` independently validates, but
+   neither contract passes the frozen capability/grounding criteria.
+6. **Blocked:** do not freeze an E4 config or run E4. Implement a separately versioned
+   fresh-bank E3d grounding decomposition described in the E3c findings. Thresholds
+   remain unchanged and banks 350–351 cannot be reused for contract selection.
+7. **Conditional only after E3d verification:** freeze one passing label-only contract
+   into a new committed E4 design config, then run the fresh E4 design cohort.
+8. Review development evidence; separately implement/freeze a variance cohort and
    preregister confirmation size/rules. These configs do not yet exist.
-8. Run a fresh confirmation cohort once, then decide E5 advance/replicate/pivot from
+9. Run a fresh confirmation cohort once, then decide E5 advance/replicate/pivot from
    the frozen rule.

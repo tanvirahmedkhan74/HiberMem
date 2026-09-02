@@ -51,6 +51,18 @@ gate status is stated separately from engineering smoke-test status.
   result. E3c and E4 now explicitly use the established 15 GiB single-Qwen floor;
   the verifier continues to record and enforce the effective value. No scientific
   configuration or threshold changed.
+- Independently validated the complete real E3c Qwen artifact at clean revision
+  `90ef285bae7f`: 16,384/16,384 conditions, zero checkpoint reuse, about 3 h 31 min,
+  and 197 Kaggle tests passed. Neither frozen contract passed readiness. Current-v1
+  AND2/AND3 supported accuracy is .917969/.935547 with unsupported assertions
+  .243815/.220145; strict format is .776001 and cap-hit rate .187012.
+- The answer-slot intervention raises strict format to .997070 and reduces cap hits
+  to .000366, but lowers AND2/AND3 supported accuracy to .843750/.880859 and raises
+  unsupported assertions to .331380/.433594. It improves presentation while worsening
+  evidence fidelity. The E4 freeze tool rejects the result and creates no config.
+- Recorded the negative result, failure decomposition, and a fresh-bank E3d plan.
+  E4/E5, confirmation, and historical test access remain blocked; no thresholds were
+  relaxed and no experiment source was changed during this analysis.
 
 ## 2026-08-31
 
