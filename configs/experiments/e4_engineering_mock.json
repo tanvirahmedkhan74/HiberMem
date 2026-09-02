@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "protocol": "phase2r-prospective-retention-v1",
+  "scientific_gate_eligible": false,
+  "confirmation_compatible": false,
+  "cohort": {
+    "name": "engineering",
+    "n_banks": 2,
+    "bank_start": 400,
+    "seed": 20260902,
+    "past_paraphrases": 2,
+    "future_paraphrases": 3
+  },
+  "output_contract": {
+    "name": "answer_slot_v1",
+    "status": "engineering_only",
+    "e3c_report_sha256": null,
+    "prompt_sha256": "8da459b3e47b933f7402ce860e504c7c8b352a1f2b1aaf05b6222f8f6a6e63c7"
+  },
+  "generation": {"do_sample": false, "max_new_tokens": 16},
+  "keep_counts": [2, 3, 4, 6],
+  "random_seeds": [0, 1, 2, 3, 4],
+  "prediction_probe": {"mode": "size_balanced", "n_masks": 64, "seed": 20260903},
+  "analysis": {
+    "practical_margin": 0.03,
+    "bootstrap_seed": 20260904,
+    "bootstrap_resamples": 2000,
+    "randomization_seed": 20260905,
+    "randomization_resamples": 10000
+  },
+  "candidates": {
+    "qwen": {
+      "type": "hf_local",
+      "model_id": "Qwen/Qwen3-4B-Instruct-2507",
+      "model_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+      "device": "cuda",
+      "dtype": "float16",
+      "quantization": "none",
+      "local_files_only": false,
+      "trust_remote_code": false
+    }
+  }
+}

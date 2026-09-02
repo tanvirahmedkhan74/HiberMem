@@ -26,6 +26,10 @@ class QuerySplit(str, Enum):
     DISCOVERY = "discovery"
     VALIDATION = "validation"
     TEST = "test"
+    # New prospective protocols use explicit capabilities rather than overloading
+    # historical Phase-2 validation/test semantics. Existing datasets are unchanged.
+    PAST = "past"
+    FUTURE = "future"
 
 
 @dataclass(frozen=True)

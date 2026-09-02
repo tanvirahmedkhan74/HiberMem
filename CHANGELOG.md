@@ -3,6 +3,49 @@
 All notable research and implementation changes are recorded here. Scientific
 gate status is stated separately from engineering smoke-test status.
 
+## 2026-09-02
+
+### E3c grounding contract and E4 prospective pipeline
+
+- Added a new development-only E3c protocol on fresh banks 350–351. It pairs the
+  existing instruction with a reinforced answer-slot contract across AND2/AND3,
+  low/high lexical nuisance, base/counterfactual worlds, two queries, and all 256
+  coalitions: 16,384 total conditions. Readiness checks are frozen for supported
+  accuracy, strict format, generation-limit rate, and unsupported assertions. No
+  contract is selected automatically and no retention result enters selection.
+- Added resumable E3c evidence, raw token traces, source/runtime/model identities,
+  symbolic controls, independent artifact reconstruction, a Qwen config, CLI tools,
+  and a Kaggle launcher. The full 16,384-condition mock artifact validates; it is
+  engineering evidence only.
+- Added the E4 `phase2r-prospective-retention-v1` environment with mixed direct,
+  AND2, OR2, and AND3 motifs, disjoint past/future paraphrase capabilities, future
+  commitments, and a fixed method-independent coalition probe. Public manifests do
+  not expose future query content.
+- Added policy-safe `PastEvidence`, which accepts only `PastQueryCapability` and
+  strips support/output fields. Implemented exact past games, exact-Shapley item,
+  additive/LOO/budget-marginal/random/shuffled/recency/query-overlap/lexical,
+  quadratic and cubic selections, equal payload-cost checks, and exhaustive small-n
+  optimization.
+- Added a fail-closed `past -> validate -> freeze -> future -> validate` state
+  machine. Frozen masks are exclusive and bind source, config, model, prompt,
+  tokenizer/runtime, public/future manifests, prediction probe, and past evidence.
+  Future analysis reports original accuracy, support decomposition, normalized
+  retention, past-fit future prediction, and paired bank-level intervals/
+  randomization. It cannot access historical Phase-2 test data or issue P2/P3 gates.
+- Added an E3c-to-E4 freeze tool. It accepts only an independently validated real
+  E3c report and a contract passing every readiness check, preserves its decoding
+  budget, and creates a new non-overwriting E4 design config for review/commit.
+  Variance and confirmation configs remain intentionally absent.
+- Added E3c/E4 Kaggle launchers and fresh-notebook cells. Both launchers retain the
+  platform CUDA Torch, require exact clean commits, run the full test suite and
+  controls, validate artifacts, and archive resumable evidence.
+- Verification: 197 local tests pass. The E4 mock pipeline independently validates
+  4,096 past conditions, its immutable freeze, and 2,424 deduplicated future/probe
+  conditions. E3c checks 16,384 and E4 symbolic controls check 4,096 past plus 6,144
+  complete future conditions. Both Bash launchers pass syntax checks. No real model
+  inference, contract freeze, E4 result, commit/push, qualification, confirmation,
+  or historical test unlock was performed.
+
 ## 2026-08-31
 
 ### Real E3 core analysis and matched decode64 preparation

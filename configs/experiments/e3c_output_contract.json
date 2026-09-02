@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "protocol": "phase2r-output-contract-v1",
+  "scientific_gate_eligible": false,
+  "confirmation_compatible": false,
+  "calibration": {"n_banks": 2, "bank_start": 350, "seed": 20260902},
+  "families": ["and2", "and3"],
+  "overlap_levels": ["low", "high"],
+  "worlds": ["base", "counterfactual"],
+  "contracts": ["current_v1", "answer_slot_v1"],
+  "generation": {"do_sample": false, "max_new_tokens": 64},
+  "readiness": {
+    "min_supported_accuracy": 0.95,
+    "min_strict_format_rate": 0.95,
+    "max_generation_limit_rate": 0.05,
+    "max_unsupported_assertion": 0.05
+  },
+  "candidates": {
+    "qwen": {
+      "type": "hf_local",
+      "model_id": "Qwen/Qwen3-4B-Instruct-2507",
+      "model_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+      "device": "cuda",
+      "dtype": "float16",
+      "quantization": "none",
+      "local_files_only": false,
+      "trust_remote_code": false
+    }
+  }
+}

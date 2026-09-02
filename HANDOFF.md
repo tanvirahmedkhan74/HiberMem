@@ -1,310 +1,344 @@
-# HiberMem Handoff
+# HiberMem handoff
 
-**Updated:** 2026-08-31
+**Updated:** 2026-09-02
+**Base repository revision reviewed:** `518c28d5b441f469df9135b15ff75778b88107c5`
 
-**Current scientific state:** P0/P1 passed. The SmolLM2 pilot and Qwen/Phi v1
-screens were negative. Full Qwen/Phi v2 bundles are now independently validated
-negative screens. Gemma's pasted v2 report is also negative; its raw bundle has
-not been independently validated locally.
+**Working implementation:** uncommitted E3c/E4 source and documentation changes
 
-**Locked state:** P2-B not evaluated; Gate P2 undecided; Phase 3 blocked
+## 1. Current decision
 
-## Current next action — matched E3 decode64 diagnostic
+P0 and P1 passed. The historical Phase-2 pilot and Qwen/Phi/Gemma Phase-2R v2
+screens are negative development evidence. No candidate qualified, P2-B was not
+evaluated on a valid locked test, Gate P2 is undecided, and Phase 3/P3 remains
+blocked.
 
-Read:
+E1–E3 are exact-game **development diagnostics** and cannot alter those gates. Real
+Qwen E1, E2, E3 core, and E3 decode64 artifacts have been independently validated.
+E3 decode64 shows that the 16-token cap severely understated supported multi-hop
+behavior, but it also confirms persistent output-contract and missing-evidence
+grounding problems. It contains no prospective future-query result.
 
-- [Archived audit](docs/ADVERSARIAL_RESEARCH_AUDIT_2026-08-31.md).
-- [E0–E6 implementation plan](docs/NEXT_EXPERIMENT_IMPLEMENTATION_PLAN_2026-08-31.md).
-- [Exact-mechanism Kaggle execution](docs/EXACT_MECHANISM_KAGGLE.md).
-- [Revised E3 theory and implementation](docs/E3_REVISED_IMPLEMENTATION_PLAN_2026-08-31.md).
-- [E3 Kaggle execution](docs/E3_KAGGLE.md).
-- [Real E3 core findings and revised decision](docs/E3_CORE_RESULTS_AND_NEXT_STEP_2026-08-31.md).
+E3c and the leakage-safe E4 development pipeline are now implemented and mock-
+validated. The next action is to review/commit the source and run real E3c on Kaggle.
+Only a readiness-passing contract may be explicitly frozen into a new committed E4
+design config. See the [E4 implementation plan](docs/E4_PROSPECTIVE_IMPLEMENTATION_PLAN_2026-09-02.md)
+and [Kaggle cells](docs/E4_KAGGLE.md). Do not run the old 49,152-condition presentation
+config, unlock the historical test, or begin matched lesions.
 
-Real E3 core at e98cf871877ba22fb721d3d3153feabb6a41ec68 independently validated:
-16,384 real calls, zero checkpoint reuse, completed in about 2 h 39 min. The pasted
-model_loaded=false output was symbolic preflight; the bundle contains real Qwen
-evidence. Direct/OR2 supported correctness is above 99.9%, AND2 50.49%, AND3 16.21%.
-AND2 full accuracy is 37.5%; AND3 full accuracy zero. There are 2,168 outputs at the
-16-token cap and 2,096 parse-null capped outputs. Many raw prefixes stop mid-chain.
-AND3 keep=2 successes are entirely unsupported. The original result stays unchanged.
+## 2. Scientific claim and methodology
 
-Hold the 49,152-case presentation run. The next config is
-`configs/experiments/exact_mechanism_e3_decode64.json`: all original cases and
-settings, only max_new_tokens increased to 64. No prompt/parser/history changes.
-The new read-only auditor/comparator validates bundles, compares runtime/input
-tokens/short-output prefixes and flags drift. Preserve the core bundle, publish
-the new preparation, then run e3_decode64 using the updated Kaggle guide. Real
-decode64 execution remains pending. No model inference, commit or push was done
-locally. E3b/E4/E5/E6 and confirmation/test remain unavailable.
+The project tests whether external-memory interactions learned from past queries are
+stable and behaviorally useful under severe deletion beyond individual memory value.
+It does not claim that deletion, graph memory, Shapley attribution, or biological
+hibernation is itself novel.
 
-Preparation verified: 181 local tests, 16,384-condition decode64 dry-run/symbolic
-controls, Bash syntax and diff checks passed. Current read-only audit:
-`results/E_results/e3_core_e98cf871877b_audit_20260831_v2.json` (roundoff-aware signs).
+For query \(q\) and surviving coalition \(S\), the behavioral game is
 
-## Historical E3a preparation (superseded where pending)
+\[
+v_q(S)=r(q,S).
+\]
 
-Real Qwen E1 (2,048) and E2 (6,144) bundles at aa97b3aa9b93 independently
-validated, including after the E3a extension. Original outputs reproduce exactly.
-Original severe-budget mean accuracy is tied at .25 for quadratic/exact Shapley;
-the 62.5%-deletion baseline advantage includes unsupported correct guesses.
-Record reversal lowers full accuracy from 1 to .75. No future queries were tested.
+For disjoint past and future query sets, fit to
 
-E3a is now implemented: banks 340–341, eight items and two queries per bank,
-direct/AND2/OR2/AND3 crossed with lexical theme overlap and counterfactual worlds.
-Core has 16,384 conditions; the presentation follow-up has 49,152. The new protocol
-uses support antichains (OR is either-sufficient), a prompt-reading symbolic oracle,
-exact SII/Mobius cross-checks, original-score policy selection with support
-decomposition, cubic selection, randomized ties and frozen presentation transfer.
-Lexical theme overlap is not full semantic validation. No submodular greedy guarantee
-is claimed for positive AND complementarity. E3b semantic/conflict/temporal work and
-E4 prospective evaluation remain unimplemented; no confirmation/test access exists.
+\[
+v^P(S)=E_{q\in Q^P}[r(q,S)]
+\]
 
-Review and publish a new source revision before real E3a inference. No commit,
-push, dependency installation or real-model run was performed in this change.
-Local verification: 163 tests passed. Full core (16,384) and presentation (49,152)
-mock runs independently validated, with zero symbolic lexical/presentation changes.
-Reports are under `results/factorial_mechanism_local_verification/`. Bash syntax
-and diff whitespace checks passed. None of this is new real-model evidence.
+and evaluate frozen selections against \(Q^F\). No future query, answer, reward,
+support annotation, or derived statistic may enter estimation, selection, threshold
+tuning, tie resolution, or model choice.
 
-## Historical E0–E2 implementation handoff (superseded where pending)
+The corrected local pair interaction is
 
-The central prospective claim remains unverified. Qwen nevertheless has a strong
-local empty-context pair contrast: 0.933333, exploratory bank-bootstrap 95% interval
-[0.866667,1]. Phi is 0.016667 [−0.033333,0.066667]. Gemma's implied aggregate contrast
-is 0.116667, with no raw-data interval available. Local complementarity is not a
-v2 qualification pass, global SII stability, or future retention evidence.
+\[
+I_{ij}=v(M)-v(M\setminus\{i\})-v(M\setminus\{j\})
++v(M\setminus\{i,j\}),
+\]
 
-The old pilot's severe-deletion policy advantage is 0.01 [−0.03,0.05], versus a
-surrogate item-value baseline. Its additive/quadratic discovery R2 values are
-in-sample, not cross-query. Do not claim a demonstrated win against exact Shapley.
+equivalently \(I_{ij}=\Delta_i+\Delta_j-\Delta_{ij}\). Positive means
+complementarity and negative means redundancy under this convention.
 
-E0/E1/E2 are implemented. E1 uses development banks 320–321, four distinct two-hop
-queries per eight-item bank, all 256 masks: 2,048 conditions. E2 reuses these facts
-for paired original/reversed-record/reversed-option presentation: 6,144 conditions.
-The analyzer labels exact values, surrogate quantities, and same-query retention.
-It evaluates no future queries and returns no qualification decision. Scores use
-12-decimal numerical tie stabilization followed by canonical player order.
+For complete games, exact Mobius coefficients, Shapley item values, and Shapley
+Interaction Index values are separate quantities. Regression singleton/pair/triple
+coefficients are surrogate Mobius terms, not exact SII. Exact estimators are
+cross-checked through independent formulas and reconstruction identities.
 
-Source/config must be reviewed, committed, and pushed by the user before real
-inference. No commit or push has been performed. Use the new full commit hash,
-not 8991ba49e14f. The launcher retains Kaggle torch, uses a new pip-less environment,
-and saves tests, runtime, raw token traces, and resumable per-condition evidence.
-Real E1/E2 Kaggle execution remains pending. Gemma is not supported in this new
-runner until its external adapter receives a separate provenance implementation.
+The fitted working model is
 
-130 local tests and Bash syntax checks passed. Full E1/E2 mock runs (2,048/6,144
-conditions) passed independent validation; symbolic presentation changes have zero
-utility effect. Reports are under `results/exact_mechanism_local_verification/`.
-These are engineering-only checks, not new LLM evidence. The pre-existing modifications in
-`docs/PHASE2R_KAGGLE_SCREENING_RESULTS_2026-08-29.md` were preserved. Semantic versus
-functional factorial experiments (E3), prospective retention (E4), matched lesions
-(E5), and large conversational-memory evaluation (E6) remain future work, with
-confirmation/test access still disabled.
+\[
+\hat v(S)=\beta_0+\sum_i\phi_i x_i+
+\sum_{i<j}I_{ij}x_ix_j+
+\sum_{i<j<k}I_{ijk}x_ix_jx_k.
+\]
 
-## Historical next-action notes — Phase 2-R v2 (superseded)
+Positive pair SII does not prove an irreducible pair mechanism: an AND3 game has zero
+pair Mobius coefficients, a positive triple coefficient, and positive within-triple
+pair SII. Mixed-sign objectives are not generally submodular, so no generic greedy
+guarantee is claimed; eight-item experiments use exact subset enumeration.
 
-### Test-isolation recovery after commit 3f2c74f (historical)
+Support is represented as an antichain of minimal sufficient memory sets. Original
+destination correctness remains the operational outcome. Supported-correct,
+unsupported-correct, abstention, unsupported assertion, parse failure, and strict
+format are diagnostic decompositions only and are never available to retention
+policies.
 
-Kaggle successfully installed the environment and detected two Tesla T4 GPUs.
-The source-rejection test incorrectly assumed that its temporary folder was
-outside Git. The workspace-local folder inherited the clean checkout, so it
-loaded Qwen and completed 432 condition records on development banks 300/301.
-Then pytest failed because the expected rejection never occurred: 88 passed,
-1 failed. The launcher correctly stopped at stage `tests`, exit 2, without
-reaching its intended controls/full-screen stages. There is no reported model
-qualification decision, and no confirmation/test access occurred.
+The independent statistical unit is the memory bank/environment. Queries,
+coalitions, counterfactual worlds, presentations, and random seeds are repeated
+measurements. Primary inference uses paired bank effects, bank bootstrap intervals,
+and paired randomization; query-level counts must not be presented as independent
+replication.
 
-The previous repair's dirty local checkout masked this test assumption. It is
-now replaced by explicit unavailable/dirty source states plus clean-state tests
-that stop at a stubbed backend. An automatic fixture prohibits real backend
-construction throughout the unit suite and sets Hugging Face offline variables
-within test scope only. The separate screen process remains enabled. Launcher
-test logs and JUnit output now enter the normal artifact archive.
+## 3. Evidence ledger
 
-Verification: 95 local tests passed; the actual clean-parent behavior was safely
-reproduced before edits with model construction intercepted. Bash syntax and
-diff checks passed. No production inference, thresholds, or gate code changed.
-
-Next: preserve both the old normal archive and
-`results/pytest-runs/run-dqyjld4b` on Kaggle before updating the checkout. The old
-archive excludes that scratch folder. Publish this repair and rerun using its
-new full commit hash; reuse cached weights but never copy the accidental test
-cache into the intended run. The execution guide has the exact recovery steps.
-
-### Setup recovery after commit 5813a28 (historical)
-
-The user successfully published `5813a282e05b2c34aa37dc515bf532876e4ca245`.
-The first Kaggle attempt failed during ensurepip, before Qwen evaluation; its
-exit 1 was not a negative model result. Separately, local base-Anaconda pytest
-encountered 23 shared-temp permission errors (57 tests passed).
-
-The repair uses a pip-less Kaggle venv and base pip's explicit --python target,
-preserving the partial old environment. Stage-aware exit reporting reserves 1
-for validated negative screens; setup/test failures become 2. Use
-`.\.conda\python.exe scripts\run_tests.py` locally for a fresh workspace-owned
-temp directory. Publish this repair and use its new commit hash to update the
-existing Kaggle clone; the execution guide includes exact recovery cells.
-Repair verification: 89 tests passed using workspace-local test scratch;
-pip-less environment targeting and Bash syntax checked locally. The subsequent
-3f2c74f attempt verified this bootstrap on Kaggle and exposed the separate test
-defect documented above. No model conclusion follows from the setup failure.
-
-Use `docs/PHASE2R_V2_IMPLEMENTATION_AND_KAGGLE.md`. The dedicated remote is now
-`git@github.com:tanvirahmedkhan74/HiberMem.git`. Source must be reviewed, committed,
-and pushed by the user before real-model inference. No push was performed here.
-
-The 2026-08-30 audit reproduced a zero-game stability pass, cached split bypass,
-and question-blind missing-link copying shortcut. Repairs add authorization
-before cache access, content/runtime cache fingerprints, nonzero balanced
-stability, reserved-bank checks, public-manifest filtering, and v2 paired
-counterfactual development banks 300–309 with no test queries. The screen has
-2,160 condition records / 1,680 unique generations per model.
-
-The v1 model outcomes (Qwen missing-link 0.30; Phi 0.464583; both failed) are in
-`docs/PHASE2R_KAGGLE_SCREENING_RESULTS_2026-08-29.md`. Raw Kaggle artifacts still
-need preservation/independent verification in this checkout. Do not describe
-the v1 screen as pending or the old wrong-repository blocker as current.
-
-Local verification: 80 tests passed; Bash syntax check passed; full 10-bank mock
-v2 screen passed with a qualifying symbolic oracle and failing shortcut controls.
-These are engineering checks, not real-model evidence. The public-pilot analyzer
-wrote `results/audits/20260830-public-pilot-v2.json` without altering the old run.
-
-The old freeze route is retired. A v2 qualification pass leads to exact-coalition
-mechanism-feasibility work, not automatic confirmation. Semantic/dependency
-factorial controls, prospective prediction panels, group-aware uncertainty, and
-a compatible frozen confirmation/test protocol remain to be implemented.
-
-## Historical record below
-
-The following sections preserve the earlier handoff and are superseded where
-they say screening has not run or the GitHub remote is absent.
-
-## Verified evidence
+### P0/P1 mathematical and synthetic validation
 
 - Phase 0: 21 phase-specific tests passed; Gate P0 passed.
 - Phase 1: Gate P1 passed at
-  `results/phase1/20260826T184454.941051Z/report.json`. Interaction sign
-  accuracy, precision@k, recall@k, nonzero Spearman, and sign stability were
-  1.0; item MAE was 0.015359, interaction MAE 0.016337, null false-positive
-  rate 0.003086, and noisy interval coverage 0.938172.
-- Engineering: 48 tests passed before the scientific run; the current suite has
-  55 tests after the locked-output and Kaggle workflow additions. The full mock
-  protocol at `results/phase2/20260826T195617.239085Z/report.json` exercised the
-  complete runner but is explicitly ineligible for scientific claims.
-- Backend: the pinned SmolLM2-1.7B CUDA backend passed qualification at
-  `results/phase2_backend_check/20260826T195523.639127Z/report.json`.
+  `results/phase1/20260826T184454.941051Z/report.json`.
+- Interaction sign accuracy, precision@k, recall@k, nonzero Spearman, and true-sign
+  stability were 1.0. Item MAE was .015359, interaction MAE .016337, null false
+  positive rate .003086, and noisy interval coverage .938172.
+- These validate the estimator implementation, not the HiberMem hypothesis.
 
-## Phase 2 scientific pilot
+### Historical SmolLM2 Phase-2 pilot
 
-Run directory:
+The real pilot is preserved at `results/phase2/20260826T195924.594962Z`.
+P2-A failed: mean split-half top-4 overlap .55 versus the .75 requirement, although
+top-pair sign consistency was .9705. Validation readiness also failed: full-memory
+accuracy .58, empty .13, and 0/10 passing banks. Direct accuracy was .85 but two-hop
+accuracy only .5125. Interaction versus item retention at nominal .70/.80 deletion
+was .28/.28 and .28/.26; combined advantage .01. The test remained locked.
 
-`results/phase2/20260826T195924.594962Z`
+### Phase-2R v1/v2 screens
 
-The run used the committed revision
-`3b13934c3215f921c6757276728467bdb9d4d851`, clean scientific source/config,
-dataset `phase2-routing-v4`, prompt `phase2-direct-survivors-v3`, and pinned
-`HuggingFaceTB/SmolLM2-1.7B-Instruct` revision
-`d1bb90bcfbe0f211109880f4da18da66f229c4f6` in CUDA float16.
+Qwen and Phi v1 missing-link scores were .30 and .464583; both failed. The v2 protocol
+added authorization-before-cache, content/runtime cache fingerprints, nonzero balanced
+stability, reserved-bank checks, public manifests, and paired counterfactual banks.
+Full Qwen and Phi v2 bundles validate as negative screens. Gemma's supplied aggregate
+report is also negative: 9/10 banks pass and supported full accuracy is high, but
+missing-pair abstention is .504167 and unsupported assertions remain substantial.
+The raw Gemma bundle has not been independently validated in this checkout.
 
-The 33,520-row SQLite cache contains the planned 30,720 discovery evaluations
-and 2,800 unique validation evaluations. There were 900 legitimate cache reuses
-for duplicate retention conditions. No test-unlock or test artifact exists.
+None of these screens authorizes confirmation or test. Their strongest exploratory
+finding is Qwen's local empty-context pair contrast .933333 with a bank-bootstrap
+interval [.866667, 1] on development banks; Phi is .016667
+[-.033333, .066667]. This is local complementarity, not global stability or future
+retention.
 
-### P2-A result
+### E1 exact coalition game
 
-- mean split-half top-4 overlap: 0.55, below 0.75;
-- mean overlap margin over random: 0.407143, below 0.50;
-- mean top-pair sign consistency: 0.9705, above 0.90;
-- decision: **FAIL**, because all checks are required.
+Real Qwen E1 at commit `aa97b3aa9b93c5ee7b6e0b3a685395442b2d220c`
+contains 2 banks x 4 queries x 256 masks = 2,048 conditions. Required-pair-only and
+full accuracy are 1, empty accuracy is 0, and the mean local pair contrast is .875.
+Exact values reconstruct the observed game. Additive/quadratic/cubic mean in-sample
+R2 values are .611685/.923723/.952570. They are not future-query R2.
 
-Only three of ten banks reached 0.75 top-4 overlap. Designed chain pairs filled
-19 of the 40 top-pair positions. The two exact-enumeration banks reached only
-0.50 and 0.75 overlap, so sampled-coalition budget alone does not explain the
-failure.
+At 75% deletion, quadratic versus exact Shapley accuracy is .25 versus .125; at
+62.5% deletion it is .25 versus .375. Their equally weighted severe-budget mean is
+tied at .25. Shapley's keep-3 advantage includes unsupported correct guesses, while
+quadratic's .25 is supported. Therefore E1 does not establish a primary-score win.
 
-### Validation result
+### E2 presentation sensitivity
 
-- mean full-memory accuracy: 0.58;
-- mean empty-memory accuracy: 0.13;
-- mean memory gap: 0.45;
-- passing banks: 0/10; required: 8/10;
-- decision: **FAIL** and test remains locked.
+E2 contains 6,144 conditions: the E1 facts under original, reversed-record, and
+reversed-option presentation. Its original 2,048 requests, token traces, outputs,
+and rewards reproduce E1 exactly. Full accuracy drops from 1 to .75 under reversed
+records. Supported-coalition accuracy is .953125 original, .863281 reversed records,
+and .902344 reversed options. Presentations are paired variants, not new banks.
 
-The main capability gap is two-hop routing. Full-memory validation accuracy was
-0.85 on direct queries but only 0.5125 on two-hop queries. Full-context outputs
-had no parser failures, so incorrect reasoning, not strict parsing, caused the
-readiness failure.
+### E3 factorial mechanism core
 
-Validation retention accuracy for Interaction versus Item at nominal deletion
-0.70 and 0.80 was 0.28 versus 0.28 and 0.28 versus 0.26. The combined diagnostic
-advantage was only 0.01, with four positive, three tied, and three negative
-banks. This is not a P2-B result because validation cannot substitute for the
-locked test.
+Protocol `phase2r-factorial-mechanism-v1` uses two independent base banks, eight
+records, two motifs/queries per bank, and all 256 coalitions. It crosses direct,
+AND2, OR2, and AND3 mechanisms with low/high lexical theme overlap and base/
+counterfactual worlds. The core has 16,384 conditions. There are 32 bank versions
+and 64 query records, but only **two independent banks**.
 
-The runner previously printed a generic unlock resume command after a failed
-validation. The unlock function was already fail-closed, and the runner message
-has now been corrected to say that the test remains locked.
+OR2 uses multiple minimal sufficient sets; AND3 is an irreducible triple in its
+symbolic Mobius representation. Opaque labels, positions, and option order are
+randomized. Counterfactual worlds reassign destinations while preserving questions
+and positions. A prompt-reading symbolic oracle validates every support table.
+Inference is stateless with fresh system/user messages for every coalition.
 
-## Decision and next work
+The real 16-token run at `e98cf871877ba22fb721d3d3153feabb6a41ec68`
+completed 16,384 calls with no checkpoint reuse in about 2 h 39 min. Direct/OR2
+supported accuracy exceeded 99.9%, but AND2 was 50.49% and AND3 16.21%. There were
+2,168 16-token cap hits and 2,185 parse-null outputs. Many chains ended before the
+destination. The 49,152-condition presentation run was therefore put on hold.
 
-Do not run either of these stages against the current run:
+### E3 matched decode64
 
-```powershell
-python scripts\run_phase2.py --stage unlock --run-dir results\phase2\20260826T195924.594962Z
-python scripts\run_phase2.py --stage test --run-dir results\phase2\20260826T195924.594962Z
+The real artifact is
+`results/hibermem-exact-e3_decode64-qwen-518c28d5b441-20260831T124653Z-74`.
+It used Qwen3-4B-Instruct-2507 revision
+`cdbee75f17c01a7cc42f958dc650907174af0554` at commit
+`518c28d5b441f469df9135b15ff75778b88107c5` and completed in about 3 h 52 min.
+
+Both 16- and 64-token bundles independently validate. Across all 16,384 matched
+conditions there are zero prompt/input-token mismatches, runtime differences,
+short-output prefix mismatches, or changes to previously early-stopped outputs.
+Reward transitions are 9,687 wrong-to-wrong, 885 wrong-to-correct, 5,812
+correct-to-correct, and zero correct-to-wrong. Of the recoveries, 880 are supported
+and five unsupported.
+
+| Family | Supported accuracy, 16 -> 64 | Full-memory accuracy, 16 -> 64 |
+|---|---:|---:|
+| Direct | 99.95% -> 99.95% | 100% -> 100% |
+| AND2 | 50.49% -> 95.90% | 37.5% -> 100% |
+| OR2 | 99.97% -> 99.97% | 100% -> 100% |
+| AND3 | 16.21% -> 97.27% | 0% -> 93.75% |
+
+The expected interaction structure also recovers: required-pair mean SII is +.9504
+for AND2 (16/16 signs), -.9994 for OR2 (16/16 signs), and +.4919 for AND3
+(48/48 within-triple signs). Mean quadratic in-sample R2 is .9614 for AND2 and
+.7879 for AND3; these remain same-query descriptions.
+
+The decode intervention does not repair the output contract. All 885 recovered
+answers are non-strict, 852 still hit 64 tokens, and strict output totals do not
+increase. AND2/AND3 unsupported abstention is .7044/.6155. The frozen scorer can
+extract a unique allowed label from an unfinished reasoning trace, so decode64 proves
+parser-scored access to the chain more strongly than clean final-answer compliance.
+
+At severe deletion, quadratic versus exact Shapley averages .50/.4375 for AND2 and
+1/.90625 for OR2, but the raw advantage is concentrated in one of two banks in each
+family. AND3 raw accuracy is tied at .50. At keep-3, quadratic's .50 is entirely
+supported while Shapley's .50 is entirely unsupported; at keep-2 the triple cannot
+be supported by any method. This is a meaningful support-profile distinction, not a
+replicated primary-score victory.
+
+## 4. Implemented software and safeguards
+
+Implemented components include:
+
+- exact coalition masks, complete/sampled games, caching, and deterministic resume;
+- discrete derivatives, exact Mobius transforms, exact Shapley/SII, polynomial
+  estimators, stability, and analytical tests;
+- survival and predictive metrics with explicit undefined cases;
+- random, item, budget-marginal, LOO, additive, quadratic, cubic, shuffled-pair,
+  and oracle-ceiling retention analyses for small games;
+- controlled Phase-2, calibration, exact-mechanism, and factorial environments;
+- support antichains, counterfactual worlds, lexical nuisance controls, symbolic
+  prompt-reading oracles, and shortcut controls;
+- HF-local/mock/OpenAI-compatible backend abstractions;
+- clean-source/config/model/prompt/runtime fingerprints, raw requests and outputs,
+  HF input/generated token IDs, rendered prompt hashes, latency and token counts;
+- atomic checkpointing, interruption-safe resume, artifact hashes, independent report
+  validators, corruption rejection, and mock/real separation;
+- fail-closed Phase-2 unlock logic and explicit development-only capabilities for
+  E1–E3; and
+- Kaggle pip-less launchers that preserve the platform Torch installation and archive
+  logs/evidence;
+- E3c paired output-contract rendering on fresh AND2/AND3 banks, fixed readiness
+  checks, resumable evidence, and an independent validator;
+- explicit prospective `PastQueryCapability` and `FutureQueryCapability` types plus
+  policy-safe `PastEvidence` that strips support/output fields;
+- E4 mixed direct/AND2/OR2/AND3 banks, sealed future commitments, fixed prediction
+  probes, exact-Shapley and interaction baselines, payload-cost validation, and
+  bank-level future analysis; and
+- an immutable `past -> freeze -> future` state machine, frozen-config tool, E4
+  validator, and dedicated E3c/E4 Kaggle launchers.
+
+Important current code locations:
+
+```text
+src/hibermem/interactions/
+src/hibermem/retention/policies.py
+src/hibermem/environments/controlled/factorial.py
+src/hibermem/evaluation/factorial.py
+src/hibermem/evaluation/factorial_audit.py
+src/hibermem/experiments/exact_mechanism.py
+scripts/run_exact_mechanism.py
+scripts/validate_exact_mechanism.py
+scripts/analyze_factorial_report.py
+kaggle/run_exact_mechanism.sh
+src/hibermem/environments/controlled/contract.py
+src/hibermem/environments/controlled/prospective.py
+src/hibermem/evaluation/prospective.py
+src/hibermem/experiments/contract.py
+src/hibermem/experiments/prospective.py
+scripts/run_e3c_contract.py
+scripts/run_e4_prospective.py
+kaggle/run_e3c_contract.sh
+kaggle/run_e4_prospective.sh
 ```
 
-Do not begin Phase 3. The master decision tree requires a Phase 2 model/task-
-dependence investigation:
+The current suite passes 197 local tests. E3c symbolic controls cover all 16,384
+conditions; its full 16,384-condition mock artifact independently validates. The E4
+mock artifact independently validates 4,096 past conditions, an immutable policy
+freeze, and 2,424 deduplicated future/probe conditions. Both launchers pass Bash
+syntax validation. These engineering checks do not create model evidence or
+scientific qualification.
 
-1. preserve this run as a negative pilot and analyze only its public splits;
-2. implement a deterministic diagnostic analyzer;
-3. create fresh calibration-only banks and expand qualification to full-bank
-   direct, two-hop, missing-link, and distractor conditions;
-4. screen the current model and a feasible stronger model/configuration only on
-   development banks;
-5. require robust two-hop full-memory behavior before spending another full
-   coalition budget;
-6. freeze one revised protocol without relaxing P2 thresholds;
-7. use fresh confirmation banks and a new locked test;
-8. unlock that new test only if both P2-A and validation readiness pass.
+## 5. Known limitations and prohibited claims
 
-The full evidence, methods, tables, interpretation, and Phase 2-R plan are in
-`docs/PHASE2_DISCOVERY_VALIDATION_ANALYSIS.md`.
+- No past-to-future interaction stability or retention benefit has been measured.
+- E1–E3 fit and evaluate policies on the same queries.
+- Only two independent E1/E2/E3 banks exist; variants are not replication.
+- Lexical theme overlap is not broad semantic similarity validation.
+- Support-aware decomposition is secondary and cannot replace original correctness.
+- Strict-format and missing-evidence behavior are unresolved for multi-hop families.
+- The current policies use small-cardinality exact enumeration and do not establish
+  production scalability.
+- No consolidation, catastrophic-forgetting, repeated-turnover, retrieval, topology,
+  hyperbolic-geometry, RL, regrowth, or natural-memory claim is supported.
+- The biological hibernation analogy is motivation only, never mechanistic evidence.
+- Do not claim a P2/P3 pass, a robust Shapley-baseline victory, future-query R2,
+  submodular guarantees, or an implemented full HiberMem architecture.
 
-## Kaggle Phase 2-R implementation
+## 6. E4 prospective implementation
 
-The next development experiment is implemented but has not been run. It screens
-two immutable 4B-class candidates on fresh banks 100–109:
+E4 tests H1/H3 on new cohorts. Its primary bank effect averages, at keep-2 and
+keep-3, future original-correctness differences between quadratic interaction
+selection and exact Shapley item retention. Exact Shapley, quadratic, and all other
+methods share the complete past coalition table. Selection is frozen before future
+queries can be accessed.
 
-- `Qwen/Qwen3-4B-Instruct-2507` at
-  `cdbee75f17c01a7cc42f958dc650907174af0554`;
-- `microsoft/Phi-4-mini-instruct` at
-  `cfbefacb99257ffa30c83adab238a50856ac3083`.
+The implementation must use a new protocol and state machine:
 
-The screen uses 1,380 generations per model and evaluates full/empty context,
-minimal direct support, exact two-hop pairs, both missing-link directions, all
-public template families, parse behavior, and per-bank readiness. It is
-development-only and cannot pass Gate P2.
+```text
+prepare -> past -> fit -> freeze -> future -> analyze -> validate
+```
 
-The supplied GitHub repository,
-`https://github.com/tanvirahmedkhan74/State-Nuisance-Geometry.git`, is not
-HiberMem; it declares project `state-geometry-video` and contains `vjepa2` code.
-This local HiberMem checkout has no remote configured. The Kaggle launchers
-therefore require a configurable repository URL and verify project identity
-before installation. Publish this tree to a dedicated HiberMem repository
-before running Kaggle.
+Future data must be excluded by typed/capability-scoped interfaces, immutable split
+manifests, exclusive-create selection artifacts, and independent lineage validation.
+The future stage must reject any source, config, model, prompt, tokenizer, bank,
+contract, or selection drift. It evaluates only deduplicated frozen masks plus
+full/empty controls and a predeclared method-independent coalition probe for future
+prediction metrics; probe outcomes cannot trigger refitting or enter the primary
+retention endpoint.
 
-If a screen candidate qualifies, the freeze tool writes a new confirmation
-config using banks 200–209 and unchanged P2 thresholds. That config must be
-reviewed, committed, and pushed. The confirmation launcher accepts only an
-exact 40-character commit and runs discovery/validation only; test remains
-locked. Full commands are in `docs/PHASE2R_KAGGLE_EXECUTION.md`.
+Use separate engineering, design, variance, and confirmation bank cohorts. Freeze the
+practical margin, bank count from variance/power analysis, primary shift mixture,
+method/order, budgets, tie rule, output contract, and multiplicity policy before
+confirmation. Report every bank effect, paired mean/median, positive-bank fraction,
+bank bootstrap interval, and paired randomization test. Query rows are nested data.
 
-## Environment
+The E3c/E4 source, development configs, runners, validators, tests, freeze tool, and
+Kaggle launchers are implemented. Real E3c and E4 inference have not run. A design
+template exists, but a real E4 config cannot be created until a real E3c contract
+passes every frozen readiness check. Variance and confirmation configs deliberately
+do not exist.
 
-Use a fresh shell with only the project-local Conda prefix active:
+## 7. Later experiment sequence
+
+1. **E3c:** fresh development-only output-contract and grounding diagnostic.
+2. **E4:** prospective past-to-future retention against exact item baselines.
+3. **E5:** matched structural lesions on a separately reserved cohort, matching
+   deletion count, token/byte cost, item utility, recency/frequency, semantics, and
+   position while separating destroyed interaction mass. This is Gate P3.
+4. **E6:** controlled natural conversational-memory/scale evaluation with identical
+   retrieval and storage/context budgets across retention methods.
+5. **Replication:** another model family and external benchmark before broad claims.
+6. **Only after success:** full graph/hypergraph retrieval, consolidation, repeated
+   turnover, topology interventions, RL, and optional regrowth.
+
+Failure of prospective stability, item-baseline improvement, matched-lesion damage,
+cost-adjusted benefit, cross-model replication, or natural-benchmark transfer is a
+valid reason to narrow or reject the central hypothesis.
+
+## 8. Reproducible environment and operational notes
+
+Use one environment only:
 
 ```powershell
 cd D:\Coding\paper\hibermem
@@ -312,7 +346,23 @@ conda activate D:\Coding\paper\hibermem\.conda
 python -m pytest -q
 ```
 
-The verified environment uses Python 3.11.15, PyTorch 2.13.0+cu130,
-torchvision 0.28.0+cu130, Transformers 5.16.1, and accelerate 1.14.0 on the
-NVIDIA GeForce RTX 4050 Laptop GPU. Do not activate `.venv` and `.conda`
-simultaneously.
+Do not activate `.venv` and `.conda` together. The verified local environment uses
+Python 3.11.15, PyTorch 2.13.0+cu130, torchvision 0.28.0+cu130, Transformers 5.16.1,
+and accelerate 1.14.0 on an RTX 4050 Laptop GPU. Real E3 cloud evidence used the
+pinned Qwen model on Kaggle T4 hardware with recorded runtime provenance.
+
+Preserve all existing result bundles and reports. Analysis tools must be read-only or
+write a new exclusive artifact; never edit original evidence. Real inference requires
+a clean reviewed commit and exact 40-character source/model revisions. No commit,
+push, dependency installation, GPU inference, confirmation access, or test unlock is
+authorized merely by this handoff.
+
+## 9. Reading order
+
+1. [Master research plan](HiberMem_MASTER_RESEARCH_IMPLEMENTATION_PLAN.md)
+2. [Adversarial research audit](docs/ADVERSARIAL_RESEARCH_AUDIT_2026-08-31.md)
+3. [E3 revised theory and implementation](docs/E3_REVISED_IMPLEMENTATION_PLAN_2026-08-31.md)
+4. [E3 core findings](docs/E3_CORE_RESULTS_AND_NEXT_STEP_2026-08-31.md)
+5. [E4 prospective implementation plan](docs/E4_PROSPECTIVE_IMPLEMENTATION_PLAN_2026-09-02.md)
+6. [E3c/E4 Kaggle execution guide](docs/E4_KAGGLE.md)
+7. [E3 Kaggle execution guide](docs/E3_KAGGLE.md)
