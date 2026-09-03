@@ -1,5 +1,12 @@
 # E3d local and Kaggle execution — exact sequential workflow
 
+> **Post-run stop notice (2026-09-03):** real E3d v1 development completed and A1
+> failed 16 frozen readiness checks. The artifact independently validates, but the
+> verification branch below is not authorized. Do not run the freeze command, create
+> the v1 verification config, or execute the verification notebook/cells. They remain
+> documented only as the original fail-closed workflow. See
+> [E3D_GROUNDING_RESULTS_2026-09-03.md](E3D_GROUNDING_RESULTS_2026-09-03.md).
+
 This is the executable companion to the E3d preregistration. E3d qualifies a
 measurement instrument only. It does not test retention, authorize E5, open the
 historical Phase-2 test, or establish HiberMem.

@@ -4,37 +4,44 @@
 
 **Repository:** `D:\Coding\paper\hibermem`
 
-**Latest real-evidence commit:** `90ef285bae7f866cc416c1cfb24da75cc1b0ee5e`
+**Latest real-evidence commit:** `73b439204988d5ba6c06ef72373ae8ad8a629e64`
 
-**Current code state:** experiment source at the evidence commit; documentation updates
-listed below are not yet committed
+**Current code state:** the real E3d artifact records a clean tree at the current
+`73b4392` commit; the post-result documentation updates listed below are not yet
+committed
 
 ## 0. Fresh-conversation bootstrap
 
 Read these first, in order:
 
 1. [This handoff](HANDOFF.md) for current state, paths, and restrictions.
-2. [Latest E3c findings](docs/E3C_OUTPUT_CONTRACT_RESULTS_2026-09-02.md) for the
-   evidence that determines the next action.
-3. [Master research plan](HiberMem_MASTER_RESEARCH_IMPLEMENTATION_PLAN.md) for the
+2. [Latest E3d findings](docs/E3D_GROUNDING_RESULTS_2026-09-03.md) for the validated
+   negative result and binding stop decision.
+3. [E3d preregistration](docs/E3D_GROUNDING_PREREGISTRATION_2026-09-03.md) for the
+   frozen checks and Stage-B decision rule.
+4. [Master research plan](HiberMem_MASTER_RESEARCH_IMPLEMENTATION_PLAN.md) for the
    hypotheses, estimands, gates, and stop rules.
-4. [E4 prospective plan](docs/E4_PROSPECTIVE_IMPLEMENTATION_PLAN_2026-09-02.md) for
+5. [E4 prospective plan](docs/E4_PROSPECTIVE_IMPLEMENTATION_PLAN_2026-09-02.md) for
    the implemented but currently blocked past/freeze/future design.
-5. [Adversarial audit](docs/ADVERSARIAL_RESEARCH_AUDIT_2026-08-31.md) for the main
+6. [Adversarial audit](docs/ADVERSARIAL_RESEARCH_AUDIT_2026-08-31.md) for the main
    mathematical, leakage, baseline, and claim-validity constraints.
 
-The current decision is **STOP before E4**. Real E3c completed, but neither output
-contract passed the frozen capability/grounding criteria. The next permitted
-experiment is a separately versioned, fresh-bank **E3d grounding decomposition**.
+The current decision is **STOP E3d v1 before verification and STOP before E4**. The
+real E3d development artifact is complete and independently valid, but A1 failed 16
+frozen checks. Strict formatting passed; grounding, counterfactual tracking, and
+dual-path query binding did not. A2 also failed and cannot be substituted. No new
+real-model run is authorized until a separately named E3d v2 branch is preregistered,
+implemented, mock-validated, reviewed, and committed on new banks.
 
 A useful opening request for a new conversation is:
 
 ```text
 Read HANDOFF.md and the documents in its fresh-conversation bootstrap. Audit the
-current Git state and independently verify the cited E3c artifact. Then implement
-only the planned E3d grounding decomposition on fresh development/verification
-banks. Do not run or unlock E4, E5, confirmation, or historical test data unless a
-label-only contract passes every predeclared E3d verification criterion.
+current Git state and independently verify the cited E3d artifact. Do not create the
+v1 verification config or run banks 370-373: A1 failed development. First review and
+preregister a separately versioned, fresh-bank model-capacity study if the project is
+to continue. Do not run or unlock E4, E5, confirmation, or historical test data
+unless a future label-only contract passes every predeclared verification criterion.
 ```
 
 ## 1. Current scientific state
@@ -50,14 +57,14 @@ label-only contract passes every predeclared E3d verification criterion.
 | E3 factorial core | COMPLETE development evidence | Interaction signs appear, but 16-token decoding confounded chains. |
 | E3 decode64 | COMPLETE development evidence | Longer decoding recovered chain performance but not clean output/grounding. |
 | E3c output contract | **NEGATIVE readiness screen** | Both contracts failed; no contract can be frozen. |
-| E3d grounding decomposition | **STAGE A IMPLEMENTED** | Frozen development design, controls, mock artifact path, independent validator, and fail-closed verification freeze exist; no real inference yet. |
-| E4 prospective retention | IMPLEMENTED, BLOCKED | Mock-valid code exists; real execution is prohibited after E3c failure. |
+| E3d grounding decomposition | **NEGATIVE DEVELOPMENT RESULT** | Real A1 passed formatting but failed 16 grounding/readiness checks; verification is prohibited. A0 and A2 also failed. |
+| E4 prospective retention | IMPLEMENTED, BLOCKED | Mock-valid code exists; real execution is prohibited after the E3d failure. |
 | E5 matched lesions / P3 | BLOCKED | Requires valid prospective evidence first. |
 | E6 natural-memory/scale | BLOCKED | Requires prior controlled evidence. |
 | Historical test | LOCKED | No valid unlock occurred. |
 
 Gate P2 remains undecided because no compatible confirmation/test was reached. Do not
-describe E1–E3c as a P2 pass or failure: they are development diagnostics. No
+describe E1–E3d as a P2 pass or failure: they are development diagnostics. No
 past-to-future interaction stability, future-query retention advantage, or causal
 lesion effect has yet been measured.
 
@@ -118,6 +125,40 @@ The independent E3c validator passes. The E4 freeze tool rejects the result with
 2 and creates no file. Thresholds may not be relaxed and banks 350–351 may not be
 reused to select a repair.
 
+### Latest result: E3d Qwen
+
+The real `phase2r-grounding-decomposition-v1` development run used banks 360–361,
+completed all 1,728 conditions with zero checkpoint reuse, passed 208 Kaggle tests,
+and independently validates at clean source commit `73b439204988`. It is
+measurement-only evidence.
+
+| Frozen A1 check | Required | Observed | Result |
+|---|---:|---:|---|
+| AND2 supported accuracy | >= .95 | .875000 | Fail |
+| AND3 supported accuracy | >= .95 | .890625 | Fail |
+| AND2/AND3 exact support | >= .95 | 1.000000 / 1.000000 | Pass |
+| AND2/AND3 full accuracy | >= .95 | .750000 / .781250 | Fail |
+| AND2/AND3 unsupported assertion | <= .05 | .260417 / .402344 | Fail |
+| Counterfactual tracking | >= .95 | .859375 | Fail |
+| Stale-base capture | <= .05 | .062500 | Fail |
+| Other-query capture | <= .05 | .218750 | Fail |
+| Single-to-dual supported drop | <= .05 | .234375 | Fail |
+| Strict format | >= .95 | .954861 | Pass |
+| Generation-limit rate | <= .05 | 0 | Pass |
+
+The central decomposition is decisive. A1 is perfect on full single-path ledgers but
+drops to .53125 on full dual-path ledgers; .46875 of those dual-path answers copy the
+competing query's destination. It also abstains reliably when the first required edge
+is absent but asserts at rates .5625–1.0 when later required edges are absent. The
+query-anchored prompt fixed presentation, not evidence fidelity.
+
+A1 failed 16 checks and cannot be frozen. A0 still fails grounding/format/cap checks.
+A2 has zero parsed unsupported assertions but only .640625 strict certificate format,
+.359375 parse-null, and inadequate supported accuracy; it fails seven checks and is
+not E4-eligible. Per the preregistration, do not create the v1 verification config,
+run banks 370–373, substitute A2, run E4/E5, or relax thresholds. See the
+[complete E3d result analysis](docs/E3D_GROUNDING_RESULTS_2026-09-03.md).
+
 ## 3. Research document index
 
 ### Current authority and latest decisions
@@ -128,8 +169,11 @@ reused to select a repair.
 | [HiberMem_MASTER_RESEARCH_IMPLEMENTATION_PLAN.md](HiberMem_MASTER_RESEARCH_IMPLEMENTATION_PLAN.md) | Normative research specification: hypotheses H1–H3, mathematics, gates, leakage rules, baselines, phases, and falsification tree. |
 | [CHANGELOG.md](CHANGELOG.md) | Chronological record of implementation, experiments, repairs, and gate-preserving decisions. |
 | [README.md](README.md) | Package overview, installation, and basic project usage. It is not the authoritative research decision log. |
-| [docs/E3C_OUTPUT_CONTRACT_RESULTS_2026-09-02.md](docs/E3C_OUTPUT_CONTRACT_RESULTS_2026-09-02.md) | Latest authoritative empirical finding: validated negative E3c screen, detailed failure decomposition, and proposed E3d design. |
-| [docs/E4_PROSPECTIVE_IMPLEMENTATION_PLAN_2026-09-02.md](docs/E4_PROSPECTIVE_IMPLEMENTATION_PLAN_2026-09-02.md) | Leakage-safe E4 estimands, cohorts, baselines, cost matching, uncertainty, state machine, and code plan. Implemented in mock form but blocked by E3c. |
+| [docs/E3D_GROUNDING_RESULTS_2026-09-03.md](docs/E3D_GROUNDING_RESULTS_2026-09-03.md) | Latest authoritative empirical finding: independently validated negative E3d development result, row-level failure decomposition, gate decision, and next branch. |
+| [docs/E3D_GROUNDING_PREREGISTRATION_2026-09-03.md](docs/E3D_GROUNDING_PREREGISTRATION_2026-09-03.md) | Frozen E3d v1 arms, banks, metrics, readiness thresholds, and fail-closed development/verification decision tree. |
+| [docs/E3C_OUTPUT_CONTRACT_RESULTS_2026-09-02.md](docs/E3C_OUTPUT_CONTRACT_RESULTS_2026-09-02.md) | Prior authoritative empirical finding: validated negative E3c screen, detailed failure decomposition, and rationale for E3d. |
+| [docs/EXPERIMENT_EXECUTION_IMPLEMENTATION_PLAN_2026-09-03.md](docs/EXPERIMENT_EXECUTION_IMPLEMENTATION_PLAN_2026-09-03.md) | E3d v1 implementation/run plan and post-result stop addendum. Its verification steps are historical and must not run after the negative development result. |
+| [docs/E4_PROSPECTIVE_IMPLEMENTATION_PLAN_2026-09-02.md](docs/E4_PROSPECTIVE_IMPLEMENTATION_PLAN_2026-09-02.md) | Leakage-safe E4 estimands, cohorts, baselines, cost matching, uncertainty, state machine, and code plan. Implemented in mock form but blocked by the E3d result. |
 | [docs/ADVERSARIAL_RESEARCH_AUDIT_2026-08-31.md](docs/ADVERSARIAL_RESEARCH_AUDIT_2026-08-31.md) | Critical audit of interaction definitions, higher-order confounding, submodularity claims, leakage, baselines, statistical units, and necessary experiments. |
 
 ### Phase and experiment findings
@@ -183,8 +227,10 @@ are repeated measurements, not independent replications.
 | E3 core Qwen | `results/E_results/hibermem-exact-e3_core-qwen-e98cf871877b-20260831T081831Z-73/results/exact_mechanism/e3_core-qwen/run/report.json` | Real 16-token factorial core. |
 | E3 core audit | `results/E_results/e3_core_e98cf871877b_audit_20260831_v2.json` | Read-only corrected audit; preferred over the earlier non-roundoff-aware audit. |
 | E3 decode64 Qwen | `results/hibermem-exact-e3_decode64-qwen-518c28d5b441-20260831T124653Z-74/results/exact_mechanism/e3_decode64-qwen/run/report.json` | Real matched longer-decoding result. |
-| E3c Qwen | `results/hibermem-e3c-qwen-90ef285bae7f-20260902T054005Z-75/results/e3c_output_contract/qwen/run/report.json` | Latest real result; complete, validated, no passing contract. |
+| E3c Qwen | `results/hibermem-e3c-qwen-90ef285bae7f-20260902T054005Z-75/results/e3c_output_contract/qwen/run/report.json` | Prior real result; complete, validated, no passing contract. |
+| E3d Qwen | `results/hibermem-e3d-development-qwen-73b439204988-20260903T075851Z-75/results/e3d_grounding/development/qwen/run/report.json` | Latest real result; complete, independently validated negative development screen; A1 failed 16 checks. |
 | E3c mock verification | `results/e3c_local_verification/run/report.json` | Engineering-only full mock artifact. |
+| E3d mock verification | `results/e3d_local_verification/run/report.json` | Engineering-only mock artifact; cannot authorize a verification config. |
 | E4 mock verification | `results/e4_local_verification/run/report.json` | Engineering-only past/freeze/future validation; not model evidence. |
 
 `results/E_results/` also contains consolidated copies of E1/E2 and the E3 core. Do
@@ -194,7 +240,7 @@ bundle is currently present.
 
 ### Bundle log convention
 
-For the exact-mechanism and E3c Kaggle bundles, inspect files in this order:
+For the exact-mechanism, E3c, and E3d Kaggle bundles, inspect files in this order:
 
 | File | Purpose |
 |---|---|
@@ -214,6 +260,11 @@ The `f137b55f72f3` and `349b2a132412` E3c attempts stopped at the old 30 GiB
 environment check before tests/controls/inference. They are infrastructure logs only.
 The real `90ef285` run used the committed 15 GiB floor, had 18.92 GiB free, ran 197
 tests, completed 16,384 calls, and exited 0 after independent validation.
+
+The real E3d `73b4392` run passed 208 tests, completed 1,728/1,728 calls with zero
+checkpoint reuse, and exited 0 after independent validation. Its launcher outcome is
+`validated_measurement_diagnostic`, not a scientific gate. The report records no
+retention result, confirmation compatibility, or historical-test access.
 
 ## 5. Code map
 
@@ -332,9 +383,10 @@ tests, completed 16,384 calls, and exited 0 after independent validation.
 | `tests/test_launcher_recovery.py`, `test_kaggle_environment.py`, `test_unit_test_isolation.py` | Setup/result classification, storage validation, and prohibition on model loading in tests. |
 | `tests/test_cli_entrypoints.py` | Import/path smoke tests for all command-line entry points. |
 
-The full suite contained 197 tests at the latest real E3c commit and passed locally
-and on Kaggle. The current implementation suite contains 208 tests and passes locally;
-the added E3d tests have not yet run on Kaggle.
+The full suite contained 197 tests at the real E3c commit. The E3d evidence commit
+contains 208 tests; all 208 passed on Kaggle before the real run and again locally
+after this result-status update. The result artifact passed independent reconstruction
+locally.
 
 ## 6. Methodological invariants
 
@@ -358,58 +410,63 @@ the added E3d tests have not yet run on Kaggle.
   Shapley-baseline win, natural-memory benefit, or full HiberMem architecture without
   the corresponding planned evidence.
 
-## 7. Immediate plan: E3d before E4
+## 7. Immediate plan: post-E3d stop and conditional v2 pivot
 
-E3d Stage A is implemented but **no real E3d inference has run**. The new
-`phase2r-grounding-decomposition-v1` protocol/config/prompt identities do not mutate
-E3c artifacts. Follow
-`docs/EXPERIMENT_EXECUTION_IMPLEMENTATION_PLAN_2026-09-03.md` for the exact controls,
-mock validation, clean-commit development run, decision, and conditional verification
-sequence.
+E3d v1 development is complete and negative. The current Qwen-4B/task sequence stops
+here. The verification branch in the original execution plan is **not authorized**:
+A1 failed development, A2 cannot be substituted, and banks 370–373 remain unopened.
 
-### Design and implementation order
+### Required closeout
 
-1. Preserve and independently revalidate the real E3c bundle before coding.
-2. Freeze a targeted E3d condition matrix that distinguishes:
-   - one query path versus two competing query paths;
-   - base versus counterfactual destinations;
-   - empty, exact minimal support, and full memory;
-   - each missing required-link position;
-   - each missing link with all distractors present; and
-   - contexts containing only the other query's path.
-3. Reserve fresh cohorts: `dev-360`–`dev-361` for diagnosis/contract development and
-   `dev-370`–`dev-373` for one frozen verification run. Never reuse 350–351.
-4. Keep `current_v1` as a paired control. Add one predeclared query-anchored,
-   label-only candidate that forces exact start-identifier/path checking.
-5. A structured support/path response may be included only as a diagnostic arm. It
-   cannot silently become the original E4 outcome contract or evidence for the same
-   hypothesis.
-6. Report full and supported accuracy, missing-link assertion by position,
-   counterfactual tracking, other-query destination capture, strict format, cap hits,
-   tokens, and latency. Include bank-level results rather than treating rows as
-   replication.
-7. Keep the E3c criteria unchanged and predeclare additional full-memory,
-   query-binding, counterfactual, and per-link requirements before inference.
-8. Implement symbolic controls, a mock end-to-end run, independent reconstruction,
-   corruption/leakage tests, a clean-commit Kaggle launcher, and a result archive.
-9. Run the diagnostic cohort, explicitly freeze at most one label-only contract, and
-   run that frozen contract once on the separate verification cohort.
+1. Preserve the downloaded bundle unchanged. The canonical report has independently
+   validated; keep the full row and condition evidence with it.
+2. Commit the E3d result analysis, handoff, changelog, README status, and runbook stop
+   notices separately from the ignored result bundle and unrelated user artifacts.
+3. Do not run `freeze_e3d_verification.py`, any v1 verification command, E4/E5/E6,
+   confirmation, the historical test, or the large E3 presentation sweep.
+4. Generate publication-quality error tables/figures from the immutable rows only:
+   single versus dual full-ledger accuracy, competing-destination capture, and
+   unsupported assertion by missing-link position. This is analysis, not a new run.
 
-### Decision after E3d
+### Recommended next experiment if the retention project continues
 
-- **All label-only verification checks pass:** generate a new committed E4 design
-  config from the independent E3d verification report, then run E4 past/freeze/future.
-- **Single-query passes but dual-query fails:** revise the bank/query interface and
-  repeat on another fresh cohort before E4.
-- **Formatting passes but grounding fails:** stop this Qwen/task pairing; evaluate a
-  separately pinned stronger model or narrow the claim.
-- **Only a structured verifier passes:** branch to a separately named hybrid
-  neuro-symbolic hypothesis; do not count it as support for the original interface.
-- **All arms fail:** preserve the negative result and stop synthetic exact-game
-  expansion.
+Create a separately named **E3d v2 stronger-reader qualification**. This is not yet
+implemented and must not be improvised through the v1 CLI.
 
-Until a label-only E3d verification pass exists: do not create an E4 frozen config,
-run E4, run E5, unlock confirmation/test, or resume the 49,152-condition E3
+1. Preselect exactly one stronger instruction reader using only model-card,
+   licensing, hardware, and cost criteria; pin its immutable revision before any row.
+   Do not run a model tournament and select the best result.
+2. Keep the task generator, A1 label-only prompt, deterministic decoding, metrics,
+   and thresholds unchanged. A model or backend change still creates a new protocol.
+3. Proposed fresh reservations are 380–381 for development and 390–393 for a single
+   conditional verification. Commit them before generating conditions; do not
+   repurpose v1 banks 370–373.
+4. Update the HF backend only if the preselected reader requires sharding. The current
+   backend loads the entire FP16 model onto one CUDA device and rejects quantization,
+   so a 14B-class FP16 model is not currently runnable on one T4.
+5. Implement v2 identity binding, symbolic controls, mock validation, resume and
+   corruption tests, independent reconstruction, and a fail-closed verification
+   freezer before real inference.
+6. Run the one real v2 development cohort. If any readiness check fails, stop the
+   prospective-retention route. If every check passes, freeze the exact reader and
+   run one verification cohort. Only a complete verification pass may lead to the
+   E4 variance-only pilot and a later E4 design freeze.
+
+If the scientific goal changes to demonstrating model-capacity dependence, add the
+4B reader as a matched baseline on the same v2 banks and preregister the paired
+comparison. That is a separate estimand from reader qualification and is not needed
+merely to apply an absolute readiness gate.
+
+### Alternative paper pivot
+
+If a stronger-reader run is infeasible or also fails, stop the HiberMem retention
+claim and develop a diagnostic paper on partial-evidence completion and competing-
+query capture across external-memory tasks. A deterministic graph executor is an
+oracle or a separately named neuro-symbolic baseline, not evidence for the original
+label-only LLM interface.
+
+Until a future label-only E3d verification pass exists: do not create an E4 frozen
+config, run E4, run E5, unlock confirmation/test, or resume the 49,152-condition E3
 presentation experiment.
 
 ## 8. Environment and operational notes
@@ -426,6 +483,19 @@ Do not activate `.venv` and `.conda` together. The verified local environment us
 Python 3.11.15, PyTorch 2.13.0+cu130, torchvision 0.28.0+cu130, Transformers 5.16.1,
 and accelerate 1.14.0 on an RTX 4050 Laptop GPU. The real E3c run used Kaggle Python
 3.12.13, Torch 2.10.0+cu128, Transformers 5.16.1, and Tesla T4 GPUs.
+The real E3d run used the same recorded Kaggle Python/Torch/Transformers versions;
+two T4 devices were visible, while the model runtime resolved to `cuda:0` in FP16.
+
+Revalidate the downloaded E3d result locally with:
+
+```powershell
+$e3dReport = "results\hibermem-e3d-development-qwen-73b439204988-20260903T075851Z-75\results\e3d_grounding\development\qwen\run\report.json"
+python scripts\validate_e3d_report.py --report $e3dReport
+```
+
+Expected output is `Artifact validation: PASS` followed by the explicit statement
+that this is development measurement-only evidence. Do not follow it with the
+verification-freeze command: the development decision is negative.
 
 Before any new real run:
 
@@ -436,14 +506,19 @@ Before any new real run:
 5. push and use the exact 40-character commit in a fresh Kaggle checkout; and
 6. verify clean Git state, pinned model revision, environment, and artifact identity.
 
-Current uncommitted documentation work should consist only of:
+The research-status changes made by the E3d result analysis are:
 
 ```text
 CHANGELOG.md
 HANDOFF.md
-docs/E3C_OUTPUT_CONTRACT_RESULTS_2026-09-02.md
-docs/E4_PROSPECTIVE_IMPLEMENTATION_PLAN_2026-09-02.md
+README.md
+docs/E3D_GROUNDING_RESULTS_2026-09-03.md
+docs/E3D_KAGGLE.md
+docs/EXPERIMENT_EXECUTION_IMPLEMENTATION_PLAN_2026-09-03.md
 ```
 
-No experiment source, model inference, gate, or original result artifact was modified
+The pre-existing untracked `docs/Role.md`, `gemini/`, `gemini_docs/`, `hibermem.zip`,
+and `output/` paths are user-owned inputs/artifacts and are not part of this focused
+result-status commit unless separately reviewed. No experiment source, model
+inference, gate, preregistered threshold, or original result artifact was modified
 while preparing this handoff.

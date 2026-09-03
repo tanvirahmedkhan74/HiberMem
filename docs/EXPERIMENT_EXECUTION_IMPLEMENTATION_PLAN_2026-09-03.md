@@ -2,10 +2,16 @@
 
 ## 1. Governing decision
 
-The only currently eligible real-model experiment is E3d development. E3d qualifies
-the reader/output instrument; it is not a retention experiment. E4, E5, E6,
-confirmation, the historical Phase-2 test, and the large E3 presentation sweep remain
-blocked.
+**Post-run status:** E3d v1 development completed as a validated negative result. A1
+failed 16 frozen readiness checks, so steps D4–D7 and every verification command in
+this document are now blocked. Do not create the v1 verification config or run banks
+370–373. See [E3D_GROUNDING_RESULTS_2026-09-03.md](E3D_GROUNDING_RESULTS_2026-09-03.md).
+
+This document preserves the preregistered implementation and execution path. E3d
+qualifies the reader/output instrument; it is not a retention experiment. E4, E5,
+E6, confirmation, the historical Phase-2 test, and the large E3 presentation sweep
+remain blocked. Any stronger-reader follow-up is a new E3d v2 protocol requiring a
+new preregistration, new identities, fresh banks, and complete engineering validation.
 
 The execution path is fail-closed:
 

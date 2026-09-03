@@ -4,27 +4,27 @@ HiberMem is currently a causal memory-interaction study, not a full agent-memory
 framework. The repository follows the phase gates in
 [`HiberMem_MASTER_RESEARCH_IMPLEMENTATION_PLAN.md`](HiberMem_MASTER_RESEARCH_IMPLEMENTATION_PLAN.md).
 
-Current status: **Phases 0 and 1 passed. Real E3/E3c diagnostics exposed an
-unresolved grounding/output-contract confound; neither E3c contract passed the
-frozen readiness criteria. E4 prospective retention, E5 lesions, the historical
-test, and Phase 3 therefore remain blocked.**
+Current status: **Phases 0 and 1 passed. The real E3d grounding decomposition is a
+validated negative development result: the query-anchored label-only reader passed
+formatting but failed 16 frozen grounding/readiness checks. E3d v1 verification, E4
+prospective retention, E5 lesions, the historical test, and Phase 3 remain blocked.**
 
-**2026-09-03 update:** the next scientifically eligible experiment is the
-development-only **E3d grounding decomposition** on fresh banks. It must retain
-`current_v1` as a paired control, test a label-only query-anchored candidate, and
-keep any structured verifier as a diagnostic arm that cannot unlock E4. See the
-[E3c findings](docs/E3C_OUTPUT_CONTRACT_RESULTS_2026-09-02.md) and the
-[evidence-bounded scientific audit](docs/ICLR_PREPAPER_SCIENTIFIC_AUDIT_2026-09-03.md).
-No readiness threshold may be relaxed and banks 350--351 may not be reused for
-contract selection.
+**2026-09-03 result:** E3d completed 1,728/1,728 real Qwen conditions on fresh banks
+360–361 and independently validates. A1 is perfect on full single-path ledgers but
+drops to .53125 on full dual-path ledgers, with .46875 competing-query destination
+capture. It also asserts unsupported answers when later path links are missing. See
+the [E3d findings](docs/E3D_GROUNDING_RESULTS_2026-09-03.md). Do not create or run the
+v1 verification config. A stronger-reader study, if pursued, must be a new
+preregistered E3d v2 protocol on new banks.
 
 E3d Stage A is now implemented with its frozen development config, symbolic controls,
 resumable evidence runner, independent validator, mock/real separation, verification
 freeze gate, and Kaggle launcher. The complete ordered runbook is in
 [`docs/EXPERIMENT_EXECUTION_IMPLEMENTATION_PLAN_2026-09-03.md`](docs/EXPERIMENT_EXECUTION_IMPLEMENTATION_PLAN_2026-09-03.md).
-This implementation does not authorize real E4 execution.
+This implementation and its negative result do not authorize real E4 execution.
 Use [`docs/E3D_KAGGLE.md`](docs/E3D_KAGGLE.md) for the verified Windows Conda
-activation sequence and the copy-paste development/verification Kaggle cells.
+activation sequence and the historical v1 workflow. Its verification cells are now
+blocked by the observed development failure.
 
 ```powershell
 conda run --prefix .\.conda python scripts\run_e3d_grounding.py --dry-run

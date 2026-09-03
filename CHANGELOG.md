@@ -5,6 +5,29 @@ gate status is stated separately from engineering smoke-test status.
 
 ## 2026-09-03
 
+### Real E3d development result: negative
+
+- Independently validated the complete real E3d Qwen artifact at clean revision
+  `73b439204988`: 1,728/1,728 conditions, zero checkpoint reuse, 208 Kaggle tests
+  passed, and launcher exit 0 as a measurement diagnostic.
+- The predeclared A1 query-anchored reader passed strict format (.954861) and the
+  generation-limit check (0), but failed 16 readiness checks. AND2/AND3 supported
+  accuracy is .875000/.890625, unsupported assertion is .260417/.402344,
+  counterfactual tracking is .859375, other-query capture is .218750, and the
+  single-to-dual supported drop is .234375.
+- Row-level decomposition shows full single-path accuracy of 1.0 but full dual-path
+  accuracy of .53125, with .46875 competing-query destination capture. Removing the
+  first link triggers safe abstention, while removing later links produces
+  unsupported assertion at rates .5625–1.0.
+- A0 and A2 also fail their configured readiness sets. A2 cannot substitute for A1.
+  Per the frozen Stage-B rule, no v1 verification config may be created, banks
+  370–373 stay unopened, and E4/E5/E6, confirmation, and historical-test access
+  remain blocked.
+- Added the durable result analysis and updated the handoff, README, and execution
+  guides. Any stronger-reader follow-up must be a separately preregistered E3d v2
+  study with a pinned model and fresh banks; no new real run is currently authorized.
+  The current 208-test suite passes locally after these documentation updates.
+
 ### E3d grounding decomposition implementation
 
 - Implemented the separate `phase2r-grounding-decomposition-v1` environment with
