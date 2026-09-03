@@ -1,0 +1,48 @@
+\section{Current evidence: diagnostics, not confirmation}
+\label{sec:evidence}
+
+\begin{table*}[t]
+\caption{Repository ground truth through 2026-09-03. Diagnostic means that the
+stage was not a confirmatory test of H1--H3.}
+\label{tab:evidence}
+\centering
+\small
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}p{0.65in}p{0.90in}p{2.63in}p{1.02in}@{}}
+\toprule
+Stage & Scale & Result & Interpretation \\
+\midrule
+P0 & 21 tests & Exact finite-difference, M\"obius, Shapley, and interaction checks pass & Mathematical implementation \\
+P1 & 28 games; 192 masks/game & Sign, precision, recall, Spearman, and stability 1.0; item MAE .015359; interaction MAE .016337 & Favorable synthetic recovery \\
+SmolLM2 P2 & 10 banks & Top-4 overlap .55 vs .75 gate; severe advantage .01, exploratory interval [-.03,.05]; 0/10 banks & Negative screen; test stayed locked \\
+E1 & 2,048 calls & Strong local complementarity; quadratic and exact-Shapley severe accuracy both .25 & No policy advantage \\
+E2 & 6,144 calls & Full accuracy 1.00 in canonical order, .75 reversed & Large position confound \\
+E3 & 16,384 calls & Supported AND2 .5049, AND3 .1621; severe truncation & Reader/decoder inadequate \\
+Decode64 & 16,384 calls & Supported approx.\ .959/.973; 885 recoveries all non-strict; 852 cap hits & Capability improved, contract failed \\
+E3c & 16,384 calls & Neither current nor answer-slot contract passed readiness & E4 correctly blocked \\
+E4/E5 & 0 real calls & Mock/validators and plans only & No scientific evidence \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\paragraph{E3c grounding decomposition.}
+For the current contract, supported AND2/AND3 accuracy is .917969/.935547,
+unsupported assertion is .243815/.220145, strict formatting is .776001, and the
+generation-limit rate is .187012. The answer-slot intervention raises strict
+formatting to .997070 and reduces the limit rate to .000366, but lowers supported
+accuracy to .843750/.880859 and raises unsupported assertions to
+.331380/.433594. At memory cardinality seven, its unsupported-assertion rate reaches
+.50 for AND2 and .667 for AND3.
+
+This pattern rejects a tempting shortcut: constraining presentation does not ensure
+evidence fidelity. If a retention mask preserves all but one link and the reader
+completes the path from priors or competing records, raw correctness can reward a
+policy for unsupported guessing. Support-conditioned accuracy, abstention, and
+competing-query capture must therefore accompany the primary outcome.
+
+\paragraph{What has not been shown.}
+No real prospective mask has been selected and evaluated; no interaction-aware
+method has beaten exact Shapley or another strong baseline; no sign-aware lesion has
+run; no natural conversational-memory result exists; and no second-model replication
+exists. The complete past games are exact observations under their fixed reader,
+not ground truth for future utility.

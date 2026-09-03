@@ -322,18 +322,19 @@ For implementation, keep the theoretical API generic enough to support multiple 
 
 # 7. Approximate Functional Model
 
-For implementation, approximate utility by a sparse low-order polynomial:
+For implementation, approximate utility by a sparse low-order polynomial whose
+coefficients come from one explicitly named basis:
 
 \[
 \hat v(S)
 =
 \beta_0
 +
-\sum_i \phi_i x_i
++\sum_i a_i x_i
 +
-\sum_{i<j} I_{ij}x_ix_j
++\sum_{i<j} a_{ij}x_ix_j
 +
-\sum_{i<j<k}I_{ijk}x_ix_jx_k,
++\sum_{i<j<k}a_{ijk}x_ix_jx_k,
 \]
 
 where
@@ -345,14 +346,13 @@ x_i=\mathbf{1}[m_i\in S].
 Interpretation:
 
 \[
-\phi_i = \text{individual memory contribution}
+a_T = \text{Möbius coefficient, or a coefficient fitted in the stated basis}.
 \]
 
-and
-
-\[
-I_T = \text{interaction contribution}.
-\]
+Ordinary Shapley item values, the Shapley Interaction Index, Shapley--Taylor
+indices, local discrete derivatives, and fitted polynomial coefficients remain
+distinct estimands. They must not be substituted for the coefficients above or
+mixed within one polynomial without a derived conversion rule.
 
 The project must not assume that interactions are sparse or low-order without checking this empirically.
 
@@ -613,19 +613,33 @@ Also match or stratify:
 - node degree where relevant;
 - payload token count.
 
-Define destroyed interaction mass:
+Absolute interaction mass is a descriptive topology statistic, not a damage
+target: deleting a negative interaction can improve utility. For fitted
+coefficients \(\hat a_T\), define sign-separated disrupted mass:
 
 \[
-J(D)
+J_+(D)
 =
 \sum_{\substack{T:\\T\cap D\neq\varnothing\\|T|\ge2}}
-|I_T|.
+\max(\hat a_T,0),
+\qquad
+J_-(D)
+=
+\sum_{\substack{T:\\T\cap D\neq\varnothing\\|T|\ge2}}
+\max(-\hat a_T,0).
 \]
 
-Require:
+The primary separation variable is the sign-aware predicted nonlinear loss
 
 \[
-J(D_s)\gg J(D_c).
+G(D)=\sum_{\substack{T:\\T\cap D\neq\varnothing\\|T|\ge2}}\hat a_T
+=J_+(D)-J_-(D).
+\]
+
+Match \(J_-(D_s)\approx J_-(D_c)\) and require:
+
+\[
+J_+(D_s)\gg J_+(D_c)
 \]
 
 Evaluate both on locked \(Q_T\).
@@ -1662,7 +1676,9 @@ Test whether interaction destruction causes extra behavioral damage after contro
 ## Separation variable
 
 \[
-J(D_s)\gg J(D_c).
+G(D_s)\gg G(D_c),
+\qquad
+J_-(D_s)\approx J_-(D_c).
 \]
 
 ## Test
@@ -2319,4 +2335,3 @@ This order minimizes compute waste, reduces confirmation bias, and makes the res
 **Engineering:** backend abstraction, caching, experiment provenance, and leakage tests are mandatory.
 
 **Decision:** proceed to Phase 0 only after Codex independently audits this master specification.
-

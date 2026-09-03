@@ -1,0 +1,67 @@
+\documentclass{article}
+\usepackage{iclr2027_conference,times}
+\input{math_commands.tex}
+\usepackage{hyperref}
+\hypersetup{hidelinks}
+\usepackage{url}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{microtype}
+
+\title{When Do Memory Interactions Matter?\\
+A Falsifiable Study of Coalition-Aware Retention for Language Agents}
+
+\author{Anonymous authors}
+
+\newcommand{\systemname}{\textsc{HiberMem}}
+\newcommand{\TODO}[1]{\textcolor{red}{\textbf{TODO: #1}}}
+\newcommand{\ind}{\mathbb{I}}
+
+% Keep anonymous for submission.
+% \iclrfinalcopy
+
+\begin{document}
+\maketitle
+
+\input{sections/01_abstract}
+\input{sections/02_introduction}
+\input{sections/03_related_work}
+\input{sections/04_formulation}
+\input{sections/05_protocol}
+\input{sections/06_evidence}
+\input{sections/07_planned_evaluation}
+\input{sections/08_limitations}
+\input{sections/09_conclusion}
+
+\section*{Reproducibility statement}
+The accompanying repository records exact configurations, source and runtime
+identities, raw generations, resumable condition tables, symbolic controls,
+independent validators, and immutable phase transitions. Appendix~\ref{app:repro}
+states the audit boundary and the items that must be frozen before prospective
+inference. Completed evidence is distinguished from mocks and proposed experiments.
+
+\section*{Ethics statement}
+The completed controlled experiments use synthetic identifiers and no human-subject
+or personal data. Natural conversational benchmarks are proposed only for later
+external validation and will require a separate privacy, licensing, and
+LLM-as-a-judge audit. A primary research-integrity risk is overstating diagnostic or
+adaptively selected evidence; our protocol therefore reports failed screens and
+prevents development artifacts from unlocking confirmation.
+
+\section*{AI use statement}
+Generative AI tools were used to assist with literature discovery, scientific
+critique, mathematical and methodological review, a statistical code correction,
+experimental-design refinement, and drafting this pre-results manuscript. The tools
+did not generate any reported model-evaluation rows. Every citation, derivation,
+claim, code change, and result must be manually verified by the authors before
+submission. The authors retain responsibility for the final content and for all
+artifacts produced with generative-AI assistance.
+
+\bibliography{references}
+\bibliographystyle{iclr2027_conference}
+
+\appendix
+\input{appendix}
+
+\end{document}

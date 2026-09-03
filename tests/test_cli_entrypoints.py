@@ -13,6 +13,8 @@ ROOT = Path(__file__).resolve().parents[1]
                                      "run_exact_mechanism.py", "validate_exact_mechanism.py",
                                      "analyze_phase2r_v2_interactions.py",
                                      "run_e3c_contract.py", "validate_e3c_report.py",
+                                     "run_e3d_grounding.py", "validate_e3d_report.py",
+                                     "freeze_e3d_verification.py",
                                      "run_e4_prospective.py", "validate_e4_report.py",
                                      "freeze_e4_protocol.py"])
 def test_entrypoint_runs_without_repository_root_on_import_path(tmp_path, script):

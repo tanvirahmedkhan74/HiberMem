@@ -1,0 +1,66 @@
+\section{Related work and novelty boundary}
+\label{sec:related}
+
+\paragraph{Long-term and structured memory.}
+MemGPT manages multiple memory tiers \citep{packer2023memgpt}; HippoRAG combines
+knowledge graphs with Personalized PageRank for multi-hop retrieval
+\citep{gutierrez2024hipporag}; and HyperMem represents topics, episodes, and facts in
+a hierarchical hypergraph \citep{yue2026hypermem}. These systems establish that
+hierarchy, associative graphs, and high-order structural relations are not novel.
+Our proposed interactions are behavioral set-function quantities rather than
+constructed retrieval edges. This is a distinction of measurement, not evidence of
+superiority.
+
+\paragraph{Memory management and observability.}
+\citet{xiong2026memory} study how memory addition and deletion affect
+experience-following behavior. OSL-MR formulates budgeted long-horizon retention and
+strictly separates offline supervision from online-observable inputs
+\citep{kang2026oslmr}. MemLens provides Shapley-style record evaluation and
+value-aware memory analytics \citep{wei2026memlens}. These works substantially
+preempt broad claims about deletion, constrained retention, or item value. A
+prospective, interaction-specific advantage against faithful versions of these
+baselines must be demonstrated.
+
+\paragraph{Attribution and interaction indices.}
+Shapley values allocate coalition-game worth to individuals \citep{shapley1953}.
+The Shapley Interaction Index averages higher-order discrete derivatives
+\citep{grabisch1999}, while Shapley--Taylor \citep{sundararajan2020} and Faith-Shap
+\citep{tsai2023} impose different interaction semantics. The \texttt{shapiq}
+ecosystem unifies exact and approximate interaction computation
+\citep{muschalik2024shapiq}. ContextCite uses context removal for scalable generation
+attribution and pruning \citep{cohenwang2024contextcite}; source attribution in RAG
+already applies cooperative games at document granularity
+\citep{nematov2025source}. CUDAnalyst uses frozen trajectories and selective feedback
+injection to analyze coalitional feedback effects in an LLM agent
+\citep{chong2026cudanalyst}. \systemname{} proposes no new interaction index.
+
+\paragraph{Adjacent context retention.}
+H2O \citep{zhang2023h2o}, StreamingLLM \citep{xiao2024streamingllm}, and
+Scissorhands \citep{liu2023scissorhands} retain tokens or KV-cache entries for
+efficient inference. Our unit is a persistent external record selected before prompt
+construction, but the importance-versus-interaction and quality--cost trade-offs are
+conceptually adjacent.
+
+\begin{table}[t]
+\caption{Conservative novelty matrix. Prospective means that future task outcomes
+are unavailable when a policy is frozen.}
+\label{tab:novelty}
+\centering
+\small
+\begin{tabular}{@{}p{1.15in}p{1.50in}p{2.45in}@{}}
+\toprule
+Area & Established & Unresolved distinction \\
+\midrule
+Item value & MemLens; RAG source attribution & Coalition-aware selection beyond strong item methods \\
+High-order memory & HyperMem; HippoRAG & Behavioral rather than constructed structure \\
+Interactions & SII; Shapley--Taylor; Faith-Shap; shapiq & Persistent-memory application, not new mathematics \\
+Retention & OSL-MR; memory deletion studies & Past-only interaction transfer under sealed future tasks \\
+Causal tests & Context removal; CUDAnalyst & Sign-aware, item-matched external-memory lesions \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The defensible novelty, if supported, is therefore combination novelty: a
+leakage-safe prospective selection test followed by sign-aware matched lesions. The
+current implementation establishes infrastructure and a measurement failure, not
+that scientific result.

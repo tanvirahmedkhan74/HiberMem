@@ -3,6 +3,44 @@
 All notable research and implementation changes are recorded here. Scientific
 gate status is stated separately from engineering smoke-test status.
 
+## 2026-09-03
+
+### E3d grounding decomposition implementation
+
+- Implemented the separate `phase2r-grounding-decomposition-v1` environment with
+  fresh banks 360–361, matched single/dual-path ledgers, AND2/AND3, low/high overlap,
+  base/counterfactual worlds, two query roles, and the exact targeted evidence panel.
+  The derived development budget is 1,728 calls: 288 conditions per bank and arm.
+- Added frozen A0 current, A1 query-anchored label-only, and A2 structured diagnostic
+  prompts; exact prompt hashes; a strict certificate parser; and a prompt-only graph
+  oracle. A2 is explicitly ineligible for E4.
+- Added bank-level and subgroup analysis for supported/full/exact accuracy,
+  unsupported assertions, strict format, token limits, counterfactual/stale capture,
+  other-query capture, per-link failures, and matched single-to-dual degradation.
+- Added resumable row checkpoints, raw generation provenance, immutable identities,
+  independent reconstruction, corruption rejection, and a freeze tool that accepts
+  only a passing real A1 development artifact. Verification also requires the exact
+  bound development report; mock evidence cannot create its config.
+- Added the development config, local CLIs, stage-aware Kaggle launcher, tests, and an
+  ordered implementation/run plan. Symbolic controls and the complete 1,728-condition
+  mock artifact validate. No real model inference, verification config, E4 run, or
+  scientific result was produced.
+
+### Pre-paper scientific audit and statistical correction
+
+- Re-audited the repository and the external Gemini critique against source code,
+  validated reports, and primary literature. Reframed the defensible contribution
+  as a falsifiable study of prospective coalition-aware memory retention, not a
+  demonstrated memory framework or a biological mechanism.
+- Corrected the governing polynomial notation so Möbius/surrogate coefficients,
+  ordinary Shapley values, SII, and local derivatives are not mixed as one basis.
+- Replaced absolute destroyed interaction mass in the planned E5 lesion with a
+  sign-aware predicted nonlinear loss while matching disrupted negative mass.
+- Corrected exact sign-flip inference to use the exact enumerated tail probability;
+  the add-one correction remains restricted to Monte Carlo randomization.
+- Updated the project status: E3d is the next eligible development diagnostic;
+  E4/E5 and all confirmation or historical-test access remain blocked.
+
 ## 2026-09-02
 
 ### E3c grounding contract and E4 prospective pipeline

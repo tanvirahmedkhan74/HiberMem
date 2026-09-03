@@ -4,16 +4,34 @@ HiberMem is currently a causal memory-interaction study, not a full agent-memory
 framework. The repository follows the phase gates in
 [`HiberMem_MASTER_RESEARCH_IMPLEMENTATION_PLAN.md`](HiberMem_MASTER_RESEARCH_IMPLEMENTATION_PLAN.md).
 
-Current status: **Phases 0 and 1 passed; the first scientifically eligible
-Phase 2 discovery/validation pilot failed its unlock prerequisites. The held-out
-test remains locked and Phase 3 is blocked.**
+Current status: **Phases 0 and 1 passed. Real E3/E3c diagnostics exposed an
+unresolved grounding/output-contract confound; neither E3c contract passed the
+frozen readiness criteria. E4 prospective retention, E5 lesions, the historical
+test, and Phase 3 therefore remain blocked.**
 
-**2026-08-30 update:** the reported Qwen/Phi v1 screens also failed qualification.
-The next runnable experiment is the audited, development-only **Phase 2-R v2**
-counterfactual screen. Follow
-[the current implementation and Kaggle guide](docs/PHASE2R_V2_IMPLEMENTATION_AND_KAGGLE.md).
-It uses the dedicated `tanvirahmedkhan74/HiberMem` repository, not the CV project.
-Legacy confirmation freezing is retired; a capability-screen pass does not unlock test.
+**2026-09-03 update:** the next scientifically eligible experiment is the
+development-only **E3d grounding decomposition** on fresh banks. It must retain
+`current_v1` as a paired control, test a label-only query-anchored candidate, and
+keep any structured verifier as a diagnostic arm that cannot unlock E4. See the
+[E3c findings](docs/E3C_OUTPUT_CONTRACT_RESULTS_2026-09-02.md) and the
+[evidence-bounded scientific audit](docs/ICLR_PREPAPER_SCIENTIFIC_AUDIT_2026-09-03.md).
+No readiness threshold may be relaxed and banks 350--351 may not be reused for
+contract selection.
+
+E3d Stage A is now implemented with its frozen development config, symbolic controls,
+resumable evidence runner, independent validator, mock/real separation, verification
+freeze gate, and Kaggle launcher. The complete ordered runbook is in
+[`docs/EXPERIMENT_EXECUTION_IMPLEMENTATION_PLAN_2026-09-03.md`](docs/EXPERIMENT_EXECUTION_IMPLEMENTATION_PLAN_2026-09-03.md).
+This implementation does not authorize real E4 execution.
+Use [`docs/E3D_KAGGLE.md`](docs/E3D_KAGGLE.md) for the verified Windows Conda
+activation sequence and the copy-paste development/verification Kaggle cells.
+
+```powershell
+conda run --prefix .\.conda python scripts\run_e3d_grounding.py --dry-run
+conda run --prefix .\.conda python scripts\run_e3d_grounding.py --controls-only
+conda run --prefix .\.conda python scripts\run_e3d_grounding.py --candidate mock --run-dir results\e3d_local_verification\run
+conda run --prefix .\.conda python scripts\validate_e3d_report.py --report results\e3d_local_verification\run\report.json --allow-mock
+```
 
 The independent pre-implementation review is in
 [`docs/PRE_IMPLEMENTATION_AUDIT.md`](docs/PRE_IMPLEMENTATION_AUDIT.md). It approves
@@ -30,7 +48,7 @@ conda run --prefix .\.conda python -m pip install -e ".[dev,reference]"
 Run without activating the environment:
 
 ```powershell
-conda run --prefix .\.conda python -m pytest -q
+conda run --prefix .\.conda python scripts\run_tests.py -q
 conda run --prefix .\.conda python scripts\run_phase0.py
 conda run --prefix .\.conda python scripts\run_phase1.py
 ```
@@ -39,7 +57,7 @@ Or activate it first:
 
 ```powershell
 conda activate D:\Coding\paper\hibermem\.conda
-python -m pytest -q
+python scripts\run_tests.py -q
 python scripts\run_phase1.py
 ```
 

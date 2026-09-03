@@ -1,0 +1,50 @@
+\section{Introduction}
+\label{sec:introduction}
+
+Long-horizon language agents use external stores to recover information that cannot
+remain in an active prompt indefinitely. Systems have explored virtual memory
+\citep{packer2023memgpt}, graph retrieval \citep{gutierrez2024hipporag},
+hierarchical high-order structure \citep{yue2026hypermem}, and explicit retention
+objectives \citep{kang2026oslmr}. Benchmarks such as LoCoMo
+\citep{maharana2024locomo} and LongMemEval \citep{wu2025longmemeval} show that
+multi-session reasoning, updates, and abstention remain difficult.
+
+Once storage, retrieval, or prompt capacity is limited, a memory manager must choose
+a subset. Record-level valuation is appealing because it converts selection into a
+ranking problem. MemLens, for example, includes Shapley-style memory evaluation and
+value-aware storage \citep{wei2026memlens}. Document attribution work also applies
+Shapley methods to RAG and explicitly studies redundancy, complementarity, and
+synergy \citep{nematov2025source}. These precedents mean that neither memory as a
+game nor Shapley-valued records are novel.
+
+Our remaining question concerns a gap between \emph{allocation} and
+\emph{selection}. Ordinary Shapley values correctly allocate the total worth of an
+arbitrary finite game, including pure higher-order interactions. They do not,
+however, preserve the identity of every valuable coalition after the game has been
+compressed into one score per item. Selecting the top-\(k\) scores optimizes an
+additive proxy, which can differ from optimizing the original set function in games
+with overlapping complementarity and redundancy. Whether this difference matters
+for future language-agent behavior is not a theorem; it is the hypothesis studied
+here.
+
+We make three methodological commitments. First, the reader, prompt renderer, output
+contract, record order, query distribution, and absence intervention define the game
+and must be fixed. Second, policy fitting observes only past-query outcomes; selected
+masks are immutable before future queries become available. Third, interactions used
+for lesions retain their sign: destroying a negative term may improve rather than
+harm performance.
+
+The current contribution is deliberately provisional:
+\begin{enumerate}
+    \item We give a coherent formulation that distinguishes exact game
+    decompositions, attribution indices, and fitted predictors.
+    \item We implement a fail-closed, independently validated
+    past--freeze--future protocol for complete eight-record games.
+    \item We report a negative reader-readiness result: unsupported completion and
+    output formatting remain confounded, so the prospective test has not run.
+    \item We preregister prospective selection, incremental prediction, and
+    sign-aware lesion hypotheses with explicit failure conditions.
+\end{enumerate}
+
+Accordingly, we do not claim that coalition-aware retention outperforms item
+valuation, scales to deployed memory, or models biological engrams.

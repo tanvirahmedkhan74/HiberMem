@@ -1,0 +1,87 @@
+\section{Fixed-reader memory games}
+\label{sec:formulation}
+
+\paragraph{Intervention.}
+For bank \(b\), let \(N_b=\{1,\ldots,n\}\) index external records
+\(M_b=(m_1,\ldots,m_n)\). Fix reader/model \(\theta\), renderer \(g\), output
+contract \(c\), decoding procedure, scoring rule, and canonical record order. For a
+query \(q\) and retained index set \(S\), the prompt is
+\(p(q,S)=g(c,q,(m_i)_{i\in S})\), and task reward is
+\(r_{\theta,g,c}(q,S)\in[0,1]\). A query distribution \(Q_b\) induces
+\begin{equation}
+v_b^Q(S)=\mathbb{E}_{q\sim Q_b}[r_{\theta,g,c}(q,S)].
+\label{eq:game}
+\end{equation}
+This is a causal intervention on record \emph{availability} conditional on the fixed
+prompting system. It is not a model-independent causal utility.
+
+\paragraph{Exact quantities.}
+For \(T\cap S=\emptyset\), the discrete derivative is
+\begin{equation}
+\Delta_Tv(S)=\sum_{L\subseteq T}(-1)^{|T|-|L|}v(S\cup L).
+\end{equation}
+The M\"obius coefficient
+\begin{equation}
+a(T)=\Delta_Tv(\emptyset),\qquad
+v(S)=\sum_{T\subseteq S}a(T)
+\label{eq:mobius}
+\end{equation}
+is an exact basis coefficient. Ordinary Shapley value is
+\begin{equation}
+\phi_i(v)=\sum_{S\subseteq N\setminus\{i\}}
+\frac{|S|!(n-|S|-1)!}{n!}\left[v(S\cup\{i\})-v(S)\right]
+=\sum_{T\ni i}\frac{a(T)}{|T|}.
+\label{eq:shapley}
+\end{equation}
+Equation~\ref{eq:shapley} makes an important correction: Shapley values do not
+assume an additive game. In the unanimity game
+\(u_T(S)=\ind[T\subseteq S]\), every \(i\in T\) receives \(1/|T|\).
+What an item ranking loses is coalition identity, not interaction value in aggregate.
+
+The Grabisch--Roubens Shapley Interaction Index is
+\begin{equation}
+I_T^{\mathrm{SII}}(v)
+=\sum_{S\subseteq N\setminus T}
+\frac{|S|!(n-|S|-|T|)!}{(n-|T|+1)!}\Delta_Tv(S)
+=\sum_{U\supseteq T}\frac{a(U)}{|U|-|T|+1}.
+\label{eq:sii}
+\end{equation}
+M\"obius coefficients, SII, local full-context derivatives, Shapley--Taylor terms,
+and fitted coefficients are distinct. For bounded \(v\in[0,1]\), an order-\(k\)
+finite difference can have magnitude \(2^{k-1}\); higher-order quantities are not
+generally confined to \([-1,1]\).
+
+\paragraph{Low-order predictor and selection.}
+From past-query coalition outcomes, fit one coherent polynomial basis
+\begin{equation}
+\hat v_{b,d}^{P}(S)=
+\sum_{\substack{T\subseteq N_b\\|T|\le d}}\hat a_{b,T}\ind[T\subseteq S].
+\label{eq:surrogate}
+\end{equation}
+The \(\hat a_{b,T}\) are projection coefficients unless the complete game is
+represented at full order. Omitted orders can contaminate them. At capacity \(k\),
+the interaction policy freezes
+\begin{equation}
+\hat S_{b,d,k}=\arg\max_{S\subseteq N_b,\ |S|=k}\hat v_{b,d}^{P}(S),
+\label{eq:select}
+\end{equation}
+with a deterministic tie rule. The primary item comparator instead maximizes
+\(\sum_{i\in S}\phi_i(v_b^P)\). Neither dominates for arbitrary games.
+
+Exact coalition evaluation costs \(O(|Q|2^n)\) reader calls per bank; exhaustive
+fixed-\(k\) selection costs \(O(\binom nk)\) surrogate evaluations. Our \(n=8\)
+setting is an instrument, not a scalable controller. Positive second differences
+also make the game non-submodular, so generic monotone-submodular greedy guarantees
+do not apply \citep{nemhauser1978}; absence of a guarantee is not a failure theorem.
+
+\paragraph{Sign-aware lesion target.}
+For deletion \(D\), define
+\begin{align}
+J_+(D)&=\sum_{\substack{T\cap D\ne\emptyset\\|T|\ge2}}\max(\hat a_T,0),&
+J_-(D)&=\sum_{\substack{T\cap D\ne\emptyset\\|T|\ge2}}\max(-\hat a_T,0),\\
+G(D)&=J_+(D)-J_-(D).
+\label{eq:lesion}
+\end{align}
+Absolute disrupted mass is not a valid damage treatment because deleting a negative
+term can improve utility. Our proposed lesion pairs match \(J_-\), item scores,
+cost, recency, centrality, and position while separating \(J_+\) or \(G\).

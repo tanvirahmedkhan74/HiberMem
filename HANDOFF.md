@@ -50,6 +50,7 @@ label-only contract passes every predeclared E3d verification criterion.
 | E3 factorial core | COMPLETE development evidence | Interaction signs appear, but 16-token decoding confounded chains. |
 | E3 decode64 | COMPLETE development evidence | Longer decoding recovered chain performance but not clean output/grounding. |
 | E3c output contract | **NEGATIVE readiness screen** | Both contracts failed; no contract can be frozen. |
+| E3d grounding decomposition | **STAGE A IMPLEMENTED** | Frozen development design, controls, mock artifact path, independent validator, and fail-closed verification freeze exist; no real inference yet. |
 | E4 prospective retention | IMPLEMENTED, BLOCKED | Mock-valid code exists; real execution is prohibited after E3c failure. |
 | E5 matched lesions / P3 | BLOCKED | Requires valid prospective evidence first. |
 | E6 natural-memory/scale | BLOCKED | Requires prior controlled evidence. |
@@ -151,6 +152,7 @@ reused to select a repair.
 | [docs/EXACT_MECHANISM_KAGGLE.md](docs/EXACT_MECHANISM_KAGGLE.md) | Local/Kaggle commands for E0, E1, and E2 plus result-reading guidance. Historical execution guide. |
 | [docs/E3_KAGGLE.md](docs/E3_KAGGLE.md) | Matched E3 decode64 Kaggle cells, bundle comparison, and recovery instructions. Presentation follow-up remains on hold. |
 | [docs/E4_KAGGLE.md](docs/E4_KAGGLE.md) | Fresh-notebook cells for E3c and conditional E4 execution. E3c section has run; E4 cells must not run because no contract passed. |
+| [docs/E3D_KAGGLE.md](docs/E3D_KAGGLE.md) | Current Windows Conda commands and sequential Kaggle development/conditional-verification cells for E3d. |
 | [docs/PHASE2_IMPLEMENTATION_PLAN.md](docs/PHASE2_IMPLEMENTATION_PLAN.md) | Original controlled Phase-2 backend/discovery/validation/unlock design. Historical; later validity repairs supersede it. |
 | [docs/PHASE2R_KAGGLE_EXECUTION.md](docs/PHASE2R_KAGGLE_EXECUTION.md) | Original Phase-2R screening/confirmation and publication workflow. Historical. |
 | [docs/PHASE2R_V2_IMPLEMENTATION_AND_KAGGLE.md](docs/PHASE2R_V2_IMPLEMENTATION_AND_KAGGLE.md) | Phase-2R v2 safeguards plus Kaggle setup/test recovery history, including pip-less environment handling. |
@@ -247,6 +249,7 @@ tests, completed 16,384 calls, and exited 0 after independent validation.
 | `src/hibermem/environments/controlled/mechanism.py` | E1/E2 exact-mechanism construction. |
 | `src/hibermem/environments/controlled/factorial.py` | E3 direct/AND2/OR2/AND3 factorial banks, support antichains, and controls. |
 | `src/hibermem/environments/controlled/contract.py` | E3c paired output-contract rendering and symbolic controls. |
+| `src/hibermem/environments/controlled/grounding.py` | E3d matched ledgers, evidence panels, frozen A0/A1/A2 prompts, parser, and controls. |
 | `src/hibermem/environments/controlled/prospective.py` | E4 fresh past/future banks, commitments, and distinct query capabilities. |
 
 ### Evaluation and experiment orchestration
@@ -262,11 +265,13 @@ tests, completed 16,384 calls, and exited 0 after independent validation.
 | `src/hibermem/evaluation/factorial.py` | E3 factorial interaction/retention summaries. |
 | `src/hibermem/evaluation/factorial_audit.py` | Independent E3 validation and matched-report comparison. |
 | `src/hibermem/evaluation/contract.py` | E3c readiness aggregation and paired contract changes. |
+| `src/hibermem/evaluation/grounding.py` | E3d subgroup, per-link, counterfactual, interference, and bank-level readiness reconstruction. |
 | `src/hibermem/evaluation/prospective.py` | Past-only E4 fitting, frozen policies, future metrics, and bank inference. |
 | `src/hibermem/evaluation/artifacts.py` | Shared artifact helpers. |
 | `src/hibermem/experiments/phase2.py` | Historical Phase-2 state machine, provenance, caching, and unlock protection. |
 | `src/hibermem/experiments/exact_mechanism.py` | Resumable E1–E3 runs and independent artifact validation. |
 | `src/hibermem/experiments/contract.py` | Resumable E3c runner, identity checks, report construction, and validator. |
+| `src/hibermem/experiments/grounding.py` | Resumable E3d runner, evidence validator, and real-development-to-verification gate. |
 | `src/hibermem/experiments/prospective.py` | Fail-closed E4 `past -> validate -> freeze -> future -> validate` state machine. |
 
 ### Command-line tools
@@ -282,6 +287,8 @@ tests, completed 16,384 calls, and exited 0 after independent validation.
 | `scripts/run_exact_mechanism.py`, `scripts/validate_exact_mechanism.py` | E1–E3 execution and independent validation. |
 | `scripts/analyze_factorial_report.py` | Read-only E3 audit and matched decode comparison. |
 | `scripts/run_e3c_contract.py`, `scripts/validate_e3c_report.py` | E3c paired-contract runner and validator. |
+| `scripts/run_e3d_grounding.py`, `scripts/validate_e3d_report.py` | E3d execution and model-free independent reconstruction. |
+| `scripts/freeze_e3d_verification.py` | Generates a verification config only from a passing real A1 development artifact. |
 | `scripts/freeze_e4_protocol.py` | Accepts only a passing real E3c report; currently rejects both contracts. |
 | `scripts/run_e4_prospective.py`, `scripts/validate_e4_report.py` | E4 stage runner and independent validator; real execution currently blocked. |
 | `scripts/verify_kaggle_environment.py` | Repository, package, CUDA, Git, and storage preflight. |
@@ -300,11 +307,13 @@ tests, completed 16,384 calls, and exited 0 after independent validation.
 | `configs/experiments/exact_mechanism_e3_decode64.json` | E3 matched 64-token config. |
 | `configs/experiments/exact_mechanism_e3_presentation.json` | Large presentation follow-up; deliberately on hold. |
 | `configs/experiments/e3c_output_contract.json` | Frozen E3c real contract screen that completed negative. |
+| `configs/experiments/e3d_grounding_development.json` | Frozen E3d development matrix on banks 360–361; 1,728 planned calls. |
 | `configs/experiments/e4_engineering_mock.json` | Mock-only E4 end-to-end validation. |
 | `configs/experiments/e4_design_template.json` | Intentionally incomplete E4 template; cannot run real inference without a passing contract freeze. |
 | `kaggle/run_phase2r_v2.sh` | Historical Qwen/Phi v2 screen launcher. |
 | `kaggle/run_exact_mechanism.sh` | E1–E3 Kaggle launcher. |
 | `kaggle/run_e3c_contract.sh` | E3c launcher; successful at commit `90ef285`. |
+| `kaggle/run_e3d_grounding.sh` | Stage-aware E3d launcher; verification requires the bound real development artifact. |
 | `kaggle/run_e4_prospective.sh` | Conditional E4 launcher; do not run now. |
 | `kaggle/run_phase2r_screen.sh`, `run_phase2r_confirmation.sh` | Historical screen/confirmation launchers; not current authorization. |
 
@@ -318,12 +327,14 @@ tests, completed 16,384 calls, and exited 0 after independent validation.
 | `tests/test_exact_mechanism.py`, `test_factorial_mechanism.py`, `test_factorial_audit.py` | E1–E3 construction, analysis, and corruption rejection. |
 | `tests/test_generation_trace.py` | Raw token/input/output provenance and deterministic trace checks. |
 | `tests/test_output_contract.py` | E3c pairing, controls, readiness, and launcher constraints. |
+| `tests/test_grounding_e3d.py` | E3d determinism, support/payload controls, parsers, summaries, artifact validation, and freeze denial. |
 | `tests/test_prospective_e4.py` | E4 capabilities, support stripping, immutable freeze, and future-before-freeze denial. |
 | `tests/test_launcher_recovery.py`, `test_kaggle_environment.py`, `test_unit_test_isolation.py` | Setup/result classification, storage validation, and prohibition on model loading in tests. |
 | `tests/test_cli_entrypoints.py` | Import/path smoke tests for all command-line entry points. |
 
 The full suite contained 197 tests at the latest real E3c commit and passed locally
-and on Kaggle.
+and on Kaggle. The current implementation suite contains 208 tests and passes locally;
+the added E3d tests have not yet run on Kaggle.
 
 ## 6. Methodological invariants
 
@@ -349,8 +360,12 @@ and on Kaggle.
 
 ## 7. Immediate plan: E3d before E4
 
-E3d is planned but **not implemented**. It must receive a new protocol/config/prompt
-identity and must not mutate E3c artifacts.
+E3d Stage A is implemented but **no real E3d inference has run**. The new
+`phase2r-grounding-decomposition-v1` protocol/config/prompt identities do not mutate
+E3c artifacts. Follow
+`docs/EXPERIMENT_EXECUTION_IMPLEMENTATION_PLAN_2026-09-03.md` for the exact controls,
+mock validation, clean-commit development run, decision, and conditional verification
+sequence.
 
 ### Design and implementation order
 
@@ -404,7 +419,7 @@ Use only the repository-local Conda environment:
 ```powershell
 cd D:\Coding\paper\hibermem
 conda activate D:\Coding\paper\hibermem\.conda
-python -m pytest -q
+python scripts\run_tests.py -q
 ```
 
 Do not activate `.venv` and `.conda` together. The verified local environment used

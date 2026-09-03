@@ -1,0 +1,67 @@
+\section{Mathematical checks}
+\label{app:math}
+
+\paragraph{Pure interactions and Shapley.}
+For the unanimity game \(u_T(S)=\ind[T\subseteq S]\), players outside \(T\) are
+dummies. Players in \(T\) are symmetric, and efficiency requires their Shapley
+values to sum to \(u_T(N)-u_T(\emptyset)=1\). Hence
+\(\phi_i=1/|T|\) for \(i\in T\). A pure AND chain is therefore not a
+counterexample in which necessary records receive zero Shapley value.
+
+\paragraph{A valid source of ranking failure.}
+Equation~\ref{eq:shapley} allocates each M\"obius dividend across its members.
+Overlapping positive and negative dividends can yield item rankings whose top-\(k\)
+set is not the maximizing coalition. Before submission we will include a
+machine-checked minimal counterexample with no tie-dependent conclusion:
+\TODO{insert verified game table, Shapley vector, and unique fixed-budget optima}.
+
+\paragraph{Range.}
+An order-\(k\) discrete derivative contains \(2^k\) bounded terms with alternating
+sign. At most \(2^{k-1}\) positive-signed terms can equal one while negative-signed
+terms equal zero, and vice versa, so
+\(|\Delta_Tv(S)|\le2^{k-1}\) for \(v\in[0,1]\). The same applies to
+\(a(T)=\Delta_Tv(\emptyset)\).
+
+\section{E3d frozen-design summary}
+\label{app:e3d}
+
+E3d uses development base banks 360--361 and verification base banks 370--373.
+Matched single-/dual-path ledgers cross AND2/AND3, low/high lexical overlap,
+base/counterfactual worlds, two query roles, and targeted evidence panels. The
+current contract, one query-anchored label-only contract, and one structured
+diagnostic run in development; only the label-only candidate can run in
+verification or enter E4. Existing .95 supported/format and .05 cap/unsupported
+criteria are unchanged, with full-memory, exact-support, counterfactual,
+other-query-capture, single-to-dual-drop, and per-link checks added. The full
+preregistration is included in the supplemental repository.
+
+\section{Reproducibility and audit boundary}
+\label{app:repro}
+
+The repository's independent validators reconstruct manifests, condition counts,
+row identities, symbolic support, rewards, analysis summaries, and cryptographic
+artifact links. Real inference requires committed source and a pinned model
+revision. Future capability access is denied until a matching immutable freeze
+exists. Mock artifacts are explicitly engineering-only. Historical Phase-2 test
+state is outside E3d/E4 and remains locked.
+
+Before any confirmatory claim, the following must be committed: exact prompts and
+parsers; model/tokenizer revision; hardware and numeric precision; generation
+parameters; bank/query generators and IDs; split capabilities; coalition sample
+design; policy set and tie rules; cost accounting; endpoint; practical margin;
+bank-level test; multiplicity rule; variance-only pilot; sample size; stopping rule;
+and independent validator. Partial calls are neither successes nor failures and must
+resume with identical identities.
+
+\section{Reviewer-facing failure criteria}
+
+\begin{enumerate}
+    \item No E3d label-only contract passes: stop E4 for this reader/task pair.
+    \item E4 shows no practical advantage or an item baseline wins: reject H1.
+    \item Interaction predictors do not improve future-mask prediction: reject H3
+    for the tested shift.
+    \item Sign-aware lesion damage is null, reversed, or imbalanced: reject H2.
+    \item Controlled gains do not replicate on a second model and natural memory:
+    restrict the contribution to a synthetic diagnostic.
+    \item Estimation cost dominates achieved savings: reject deployment relevance.
+\end{enumerate}

@@ -14,6 +14,7 @@ from hibermem.environments.controlled.prospective import (
 )
 from hibermem.evaluation.prospective import (
     PastEvidence,
+    _sign_flip_test,
     freeze_past_policies,
     future_mask_indices,
     summarize_future,
@@ -28,6 +29,13 @@ from hibermem.retention.costs import equal_length_bank_audit
 
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def test_exact_sign_flip_uses_the_exact_tail_probability() -> None:
+    result = _sign_flip_test([1.0, 1.0], seed=0, resamples=10)
+    assert result["mode"] == "exact"
+    assert result["null_draws"] == 4
+    assert result["p_value"] == pytest.approx(0.25)
 
 
 def _config():

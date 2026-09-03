@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "protocol": "phase2r-grounding-decomposition-v1",
+  "stage": "development",
+  "scientific_gate_eligible": false,
+  "confirmation_compatible": false,
+  "retention_result": false,
+  "historical_test_access": false,
+  "cohort": {
+    "base_bank_seeds": [360, 361],
+    "seed": 20260903
+  },
+  "families": ["and2", "and3"],
+  "overlap_levels": ["low", "high"],
+  "worlds": ["base", "counterfactual"],
+  "ledger_modes": ["single_path", "dual_path"],
+  "arms": ["current_v1", "query_anchored_v1", "structured_verifier_v1"],
+  "generation": {
+    "do_sample": false,
+    "max_new_tokens": 64
+  },
+  "readiness": {
+    "min_supported_accuracy": 0.95,
+    "min_strict_format_rate": 0.95,
+    "max_generation_limit_rate": 0.05,
+    "max_unsupported_assertion": 0.05,
+    "min_full_accuracy": 0.95,
+    "min_exact_support_accuracy": 0.95,
+    "min_counterfactual_tracking": 0.95,
+    "max_stale_base_capture": 0.05,
+    "max_other_query_capture": 0.05,
+    "max_per_link_unsupported_assertion": 0.05,
+    "max_single_to_dual_drop": 0.05
+  },
+  "candidates": {
+    "qwen": {
+      "type": "hf_local",
+      "model_id": "Qwen/Qwen3-4B-Instruct-2507",
+      "model_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+      "device": "cuda",
+      "dtype": "float16",
+      "quantization": "none",
+      "local_files_only": false,
+      "trust_remote_code": false
+    }
+  },
+  "development_selection": null
+}

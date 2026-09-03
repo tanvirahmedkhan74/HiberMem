@@ -1,0 +1,57 @@
+\section{Leakage-safe protocol and hypotheses}
+\label{sec:protocol}
+
+\paragraph{Capabilities and stages.}
+Each bank has disjoint past and future query capabilities. Policy code accepts a
+restricted past-evidence object containing only bank ID, query ID, coalition mask,
+and reward. It cannot receive support labels, generated outputs, or a future-query
+object. The execution state is:
+\[
+\textsc{Past}\ \longrightarrow\ \textsc{Validate}\ \longrightarrow\
+\textsc{Freeze}\ \longrightarrow\ \textsc{Future}\ \longrightarrow\
+\textsc{Validate}.
+\]
+The freeze binds source, configuration, model, tokenizer, prompts, runtime,
+manifests, evidence hash, predictor, and every selected mask. Future execution is
+denied before a valid freeze. Mock evidence is marked engineering-only and cannot
+qualify a method.
+
+\paragraph{H1: prospective retention.}
+For severe budgets \(k\in\{2,3\}\), a past-only low-order interaction selector
+improves future original accuracy over every prespecified strong item method, with
+exact-Shapley top-\(k\) as the primary comparator. For bank \(b\),
+\begin{equation}
+D_b=\frac12\sum_{k\in\{2,3\}}
+\left(A^F_{b,\mathrm{interaction},k}
+-A^F_{b,\mathrm{exact\ Shapley},k}\right).
+\label{eq:primary}
+\end{equation}
+A practical margin and confirmation size will be frozen after a variance-only pilot
+on separate banks. No current result estimates Equation~\ref{eq:primary}.
+
+\paragraph{H2: matched lesion.}
+On a reserved cohort, a deletion with larger past-predicted \(G(D)\) causes more
+future damage than a matched control. Pair identities and balance tolerances are
+frozen before future outcomes. Negative-interaction and zero-separation placebo
+lesions test sign and residual confounding.
+
+\paragraph{H3: incremental prediction.}
+On a method-independent panel of future masks, the past-only \(d=2\) or \(d=3\)
+predictor improves error, rank correlation, and top-set overlap beyond \(d=1\).
+We distinguish surface-paraphrase transfer (H3a), compositional/dependency shift
+(H3b), and later temporal shift (H3c). The current E4 generator tests H3a only.
+
+\paragraph{Measurement readiness.}
+Before any hypothesis test, the reader must satisfy frozen supported-accuracy,
+strict-format, generation-limit, and unsupported-assertion criteria. Full-memory,
+exact-support, counterfactual tracking, competing-query capture, and every
+missing-link position are also checked. A structured path certificate may diagnose
+reasoning, but cannot silently replace the label-only E4 interface.
+
+\paragraph{Inference.}
+The independent unit is the base memory bank. Queries, worlds, masks, and seeds are
+nested repeated observations. The frozen primary procedure is a one-sided
+bank-level sign-flip/randomization test with a bank bootstrap interval; mean,
+median, positive-bank fraction, and all \(D_b\) are reported. Exact enumeration uses
+the exact tail proportion; Monte Carlo randomization uses an add-one correction.
+Secondary contrasts are multiplicity-controlled.

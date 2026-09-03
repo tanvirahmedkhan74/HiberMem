@@ -241,10 +241,16 @@ def _sign_flip_test(values: list[float], seed: int, resamples: int) -> dict[str,
             for _ in range(resamples)
         ]
         mode = "monte_carlo"
+    extreme = sum(value >= observed for value in null)
+    p_value = (
+        extreme / len(null)
+        if mode == "exact"
+        else (1 + extreme) / (len(null) + 1)
+    )
     return {
         "mode": mode,
         "alternative": "interaction_greater_than_item",
-        "p_value": (1 + sum(value >= observed for value in null)) / (len(null) + 1),
+        "p_value": p_value,
         "observed_mean": observed,
         "null_draws": len(null),
         "seed": seed if mode == "monte_carlo" else None,

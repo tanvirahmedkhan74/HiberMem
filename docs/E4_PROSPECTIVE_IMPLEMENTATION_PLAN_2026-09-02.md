@@ -301,9 +301,13 @@ versioned prospective study.
 
 On a separately reserved future cohort, construct deletion pairs matched on count,
 token/byte cost, past-estimated item utility, recency/frequency, semantic centrality,
-and relevant position metadata, but separated on destroyed past interaction mass
-\(J(D)\). Freeze lesions before outcomes. Gate P3 advances only if high-interaction
-destruction produces greater held-out damage across independent banks.
+relevant position metadata, and disrupted negative interaction mass. Separate pairs
+on sign-aware predicted nonlinear loss
+\(G(D)=\sum_{T\cap D\ne\varnothing,|T|\ge2}\hat a_T\), equivalently high positive
+mass after matching negative mass. Absolute interaction mass is descriptive only:
+destroying a negative term can improve utility. Freeze lesions before outcomes.
+Gate P3 advances only if the high-predicted-loss lesion produces greater held-out
+damage across independent banks.
 
 ### E6 — natural memory and strong systems baselines
 
